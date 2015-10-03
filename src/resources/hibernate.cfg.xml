@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory name = "sessionFactory">
+		<!-- Database connection settings -->	
+
+		<!--<property name ="jndi.class">weblogic.jndi.WLInitialContextFactory</property>
+		<property name="connection.datasource">picassoPortalNLDS</property>
+		<property name="transaction.factory.class">org.hibernate.transaction.JTATransactionFactory</property >	-->	
+		<!-- Database connection settings --> 
+<!-- Database connection settings -->
+		<property name="connection.driver_class">oracle.jdbc.driver.OracleDriver</property>
+		<!--<property name="connection.url">jdbc:oracle:thin:@punitp118826d.ad.infosys.com:1521:VFNLPortal</property> -->
+		<property name="connection.url">jdbc:oracle:thin:@localhost:1521:xe</property>
+		<property name="connection.username">hibernate_user</property>
+		<property name="connection.password">Infosys123</property>
+		
+		<!--<property name="connection.datasource">datasouce1</property>-->
+		<!-- SQL dialect -->
+		<property name="dialect">org.hibernate.dialect.OracleDialect</property>
+		<!--<JDBC connection pool (use the built-in) -->
+		<property name="connection.pool_size">1</property>
+
+		<!-- SQL dialect -->
+		
+
+		<!-- JDBC connection pool (use the built-in) -->
+		<property name="connection.pool_size">1</property>
+
+		<!-- Echo all executed SQL to console -->
+		<property name="show_sql">true</property>
+
+		<property name="hibernate.query.factory_class">org.hibernate.hql.classic.ClassicQueryTranslatorFactory</property>
+
+		<property name="hbm2ddl.auto">update</property>
+		<!-- Mapping files --><!--
+		
+			
+			<mapping class="com.goEasy.model.login.entity.Administrator" />
+			
+			
+			-->
+			
+			<mapping class="com.goEasy.model.login.entity.Seller" />
+			
+			<mapping class="com.goEasy.model.login.entity.Category" />
+			
+			<mapping class="com.goEasy.model.login.entity.User" />
+			<mapping class="com.goEasy.model.login.entity.State" />
+			<mapping class="com.goEasy.model.login.entity.City" />
+			<mapping class="com.goEasy.model.login.entity.Product" />
+			<mapping class="com.goEasy.model.login.entity.PartnerCompany" />
+			<mapping class="com.goEasy.model.login.entity.Order" />
+			<mapping class="com.goEasy.model.login.entity.Customer" />
+			<mapping class="com.goEasy.model.login.entity.Invoice" />
+			<mapping class="com.goEasy.model.login.entity.Manifest" />
+			<mapping class="com.goEasy.model.login.entity.ShippingInfo" />
+			<mapping class="com.goEasy.model.login.entity.Rto" />
+			<!--
+					
+		
+				
+	--></session-factory>
+</hibernate-configuration>
