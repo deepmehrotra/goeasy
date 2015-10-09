@@ -24,8 +24,7 @@
     };
     $(document).ready(function(){
         $("[name=paymentType]").click(function(){
-        	alert(" Inside click");
-            $('.radio1').hide();
+        	 $('.radio1').hide();
             $("#blk-"+$(this).val()).slideDown();
         });
         $('#paymentField').change(function () {
@@ -33,8 +32,7 @@
             $('#'+$(this).val()).fadeIn();
         });
         $('#paymentField1').change(function () {
-        	alert(" Changed payment field");
-            $('.payment-box').hide();
+        	$('.payment-box').hide();
             $('#'+$(this).val()).fadeIn();
         });
         $('#data_1 .input-group.date').datepicker({
@@ -160,9 +158,9 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                    <div class="col-md-3"><form:input path="taxcategory" value="${partner.taxcategory}" placeholder="Tax Category" class="form-control"/></div>
+                                    <%-- <div class="col-md-3"><form:input path="taxcategory" value="${partner.taxcategory}" placeholder="Tax Category" class="form-control"/></div>
                                     <div class="col-md-4 content-rgt"><form:input path="taxrate" value="${partner.taxrate}" placeholder="Tax rate" class="form-control"/> <span>%</span></div>
-                                    <div class="col-md-4"><form:checkbox path="tdsApplicable"/> TDS Applicable</div>
+                                     --%><div class="col-md-4"><form:checkbox path="tdsApplicable"/> TDS Applicable</div>
                                 </div>
                                 </div>
                                 <div class="col-sm-12">

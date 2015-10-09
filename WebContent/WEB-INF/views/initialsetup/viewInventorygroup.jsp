@@ -109,7 +109,7 @@ $(document).ready(function() {
                                         <tr>
                                             <td>${loop.index+1}</td>
                                             <td>${subcategory.catName}</td>
-                                            <td>TBD01/05/215</td>
+                                            <td>${subcategory.createdOn}</td>
                                              <td>${subcategory.productCount}</td>
                                             <td>${subcategory.catDescription}</td>
                                             <td class="tooltip-demo">

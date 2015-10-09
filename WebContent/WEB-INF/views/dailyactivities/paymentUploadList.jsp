@@ -9,7 +9,6 @@
 <script type="text/javascript">
     function onclickNavigatePayment(value,id) {
     	var targeturl="";
-    	alert(" Inside navigate payments value :"+value);
     	switch(value)
     	{
     	

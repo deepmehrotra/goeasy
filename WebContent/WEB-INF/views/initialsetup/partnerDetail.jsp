@@ -37,7 +37,6 @@
                     <div class="ibox float-e-margins">
                         <div class="ibox-title">
                             <h5>Partners</h5>
-                        
                          <div class="ibox-tools">
                                 <a href="#" onclick="onclickAddInventoryGroup()" class="btn btn-primary btn-xs" >Add new Brand</a>
                             </div>
@@ -104,7 +103,7 @@
             </div>
             <script>
     $(document).ready(function(){
-        $('.panel').each(function() {
+    	$('.panel').each(function() {
             animationHover(this, 'flipInY');
         });
     });

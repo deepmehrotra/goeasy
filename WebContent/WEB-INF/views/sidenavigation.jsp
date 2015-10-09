@@ -38,7 +38,7 @@
                         <li><a href="#">Product Info <span class="fa arrow"></span></a>
                             <ul class="nav nav-third-level">
                                 <li><a href="#" onclick="onclickSideNavigation('InventoryGroup')">Inventory Groups</a></li>
-                                <li><a href="#" onclick="onclickSideNavigation('Product')">Product Cost</a></li>
+                                <li><a href="Product.html">Product</a></li>
                                 <li><a href="expenseCategories.html">Expense Group</a></li>
                             </ul>
                         </li>
@@ -52,7 +52,7 @@
                          <li><a href="#" onclick="onclickSideNavigation('RTO/Return')">RTO/Return</a></li>
                          <li><a href="paymentUploadList.html">Payment</a></li>
                          <li><a href="#" onclick="onclickSideNavigation('Inventory')">Inventory</a></li>
-                          <li><a href="#" onclick="onclickSideNavigation('ExpensDA')">Expenses</a></li>
+                          <li><a href="expenselist.html">Expenses</a></li>
                        
                     </ul>
                 </li>

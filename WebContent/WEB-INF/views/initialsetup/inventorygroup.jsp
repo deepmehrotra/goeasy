@@ -20,8 +20,7 @@
         });
     }
     function onclickAddInventoryGroup() {
-    	alert(" add Inventory group vcalled");
-        $.ajax({
+     $.ajax({
             url : 'addInventoryGroup.html',
             success : function(data) {
                 $('#centerpane').html(data);
@@ -50,8 +49,7 @@
                                     <th>#</th>
                                     <th>Inventory Group Name</th>
                                     <th>Created on</th>
-                                    <th>Product category</th>
-                                    <th>No. Product</th>
+                                    <th>Product category count</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -60,13 +58,12 @@
                                 <tr>
                                     <td>${loop.index+1}</td>
                                     <td><a href="#" onclick="onclickviewCat(${category.id})">${category.catName}</a></td>
-                                    <td>01/05/215 TBD</td>
+                                    <td>${category.createdOn}</td>
                                      <c:if test="${!empty category.subCategory}">
                                     <%-- <td>${fn:length(category.subCategory)}</td> --%>
                                     <td>TBD</td>
                                      </c:if>
-                                    <td>${category.productCount}</td>
-                                   <%--  <td class="tooltip-demo"><a href="#" onclick="onclickviewCat(${category.id})"><i class="fa fa-list-alt text-navy" data-toggle="tooltip" data-placement="top" data-original-title="View"></i></a> 
+                                    <%--  <td class="tooltip-demo"><a href="#" onclick="onclickviewCat(${category.id})"><i class="fa fa-list-alt text-navy" data-toggle="tooltip" data-placement="top" data-original-title="View"></i></a> 
                                     <a href=""><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
                                  --%> <td class="tooltip-demo"><a href=""><i class="fa fa-list-alt text-navy" data-toggle="tooltip" data-placement="top" data-original-title="View"></i></a> 
                                     <a href=""><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>

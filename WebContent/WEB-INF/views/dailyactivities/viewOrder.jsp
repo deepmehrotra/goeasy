@@ -84,7 +84,7 @@
                                   <span>${order.orderSP}</span>
                               </div>
                               <div>
-                                  <span>Net Rate</span>
+                                  <span>Gross Net Rate</span>
                                   <span></span>
                                   <span>${order.netRate}</span>
                               </div>
@@ -101,7 +101,7 @@
                              <div>
                                   <span>Product Cost</span>
                                   <span></span>
-                                  <span>NA</span>
+                                  <span>${productCost}</span>
                               </div>
                           </div>
 
@@ -177,7 +177,10 @@
                               <div>
                                   <span>Negative Amount</span>
                                   <span></span>
-                                  <span>${order.orderPayment.negativeAmount}</span>
+                                  <c:if test="${order.orderPayment.negativeAmount gt 0}">
+								    <span>-${order.orderPayment.negativeAmount}</span>
+								</c:if>
+                                 
                               </div>
 							  <div>
                                   <span>Positive Amount</span>
@@ -226,7 +229,7 @@
                                   <span>${order.orderTax.tdsToDeduct}</span>
                               </div>
 							   <div>
-                                 <span>Amount to receive</span>
+                                 <span>Net receivable</span>
                                   <span></span>
                                   <span>${order.totalAmountRecieved}</span>
                               </div>

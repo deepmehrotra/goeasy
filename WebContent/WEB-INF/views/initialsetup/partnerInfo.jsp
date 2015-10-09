@@ -28,7 +28,7 @@
         	
             url : urltogo,
             success : function(data) {
-                $('#centerpane').html(data);
+            $('#centerpane').html(data);
             }
         });
     }

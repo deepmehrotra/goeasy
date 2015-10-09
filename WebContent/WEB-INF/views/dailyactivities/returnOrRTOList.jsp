@@ -67,43 +67,8 @@ $(document).ready(function () {
 					edit : true,
 					create : true
 				},
-				awbNum : {
-					title : 'AWB No',
-					width : '10%',
-					edit : false,
-					list : true,
-					create : false
-				},
 				invoiceID : {
 					title : 'InvoiceID',
-					width : '10%',
-					edit : false,
-					list : true,
-					create : false
-				},
-				subOrderID : {
-					title : 'SubOrderId',
-					width : '10%',
-					edit : false,
-					list : true,
-					create : false
-				},
-				PIreferenceNo : {
-					title : 'PIreferenceNo',
-					width : '10%',
-					edit : false,
-					list : true,
-					create : false
-				},
-				uniqueItemId : {
-					title : 'UniqueItemId',
-					width : '10%',
-					edit : false,
-					list : true,
-					create : false
-				},
-				orderDate : {
-					title : 'Order Date',
 					width : '10%',
 					edit : false,
 					list : true,
@@ -116,6 +81,16 @@ $(document).ready(function () {
 					list : true,
 					create : true
 				},
+				netPaymentResult : {
+					title : 'Payment Result',
+					width : '15%',
+					edit : false,
+					list : true,
+					create : false,
+					display:function(data){
+						return data.record.orderPayment.netPaymentResult;
+	           }
+				},
 				returnId : {
 					title : "",
 					width : '0%',
@@ -127,11 +102,11 @@ $(document).ready(function () {
 				        } 
 				},
 				returnOrRTOId : {
-					title : 'Return ID',
+					title : 'Return/RTO ID',
 					width : '10%',
 					edit : true,
 					list : true,
-					create : true,
+					create : false,
 					display:function(data){
 						return data.record.orderReturnOrRTO.returnOrRTOId;
 	           },
@@ -207,6 +182,15 @@ $(document).ready(function () {
 					        } 
 				         
 						},
+						returnOrRTOstatus : {
+							title : 'Return or RTO',
+							width : '10%',
+							edit : true,
+							list : false,
+							create : true,
+							options: {'Return' : 'Return','RTO': 'RTO'}
+						         
+					},
 				returnOrRTOreason : {
 					title : 'Return reason',
 					width : '20%',
