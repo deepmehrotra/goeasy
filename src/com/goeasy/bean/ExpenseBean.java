@@ -14,7 +14,7 @@ public class ExpenseBean {
 	private Date createdOn;
 	private double amount;
 	private int sellerId;
-	private double expenditureByperson;
+	private String expenditureByperson;
 	private String paidTo;
 	private ExpenseCategoryBean expenseCategory;
 	public int getExpenseId() {
@@ -66,10 +66,10 @@ public class ExpenseBean {
 	public void setSellerId(int sellerId) {
 		this.sellerId = sellerId;
 	}
-	public double getExpenditureByperson() {
+	public String getExpenditureByperson() {
 		return expenditureByperson;
 	}
-	public void setExpenditureByperson(double expenditureByperson) {
+	public void setExpenditureByperson(String expenditureByperson) {
 		this.expenditureByperson = expenditureByperson;
 	}
 	public String getPaidTo() {

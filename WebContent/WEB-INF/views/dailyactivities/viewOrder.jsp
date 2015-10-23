@@ -17,14 +17,20 @@
                           
                           <div class="time-line-wrp">
                               <ul>
+                               <c:if test="${!empty order.orderTimeline}">
+                                  <c:forEach items="${order.orderTimeline}" var="timeline" varStatus="loop">
+                                  <li class="active"><i class="fa fa-check"></i>
+                                   <span><fmt:formatDate value="${timeline.eventDate}" pattern="MMM-dd-YYYY"/></span><p>${timeline.event}</p></li>
+                               <!--    <li class="active"><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
                                   <li class="active"><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
                                   <li class="active"><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
-                                  <li class="active"><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
                                   <li><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
                                   <li><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
                                   <li><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
                                   <li><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
-                                  <li><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li>
+                                  <li><i class="fa fa-check"></i> <span>May 10, 2015</span><p>Order</p></li> -->
+                                  </c:forEach>
+                                  </c:if>
                               </ul>
                           </div>
 

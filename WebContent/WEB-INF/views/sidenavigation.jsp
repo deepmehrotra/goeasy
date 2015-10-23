@@ -34,7 +34,7 @@
                 <li >
                     <a href="minor.html"><i class="fa fa-sitemap"></i> <span class="nav-label">Initial Setup</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
-                        <li class="active"><a href="partners.html">Partner Info</a></li>
+                        <li class="active"><a href="partners.html">Sales Channels</a></li>
                         <li><a href="#">Product Info <span class="fa arrow"></span></a>
                             <ul class="nav nav-third-level">
                                 <li><a href="#" onclick="onclickSideNavigation('InventoryGroup')">Inventory Groups</a></li>

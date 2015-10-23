@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+
 @Entity
 @Table
 public class Product {
@@ -23,14 +25,19 @@ public class Product {
 	@Column
 	private float productPrice;
 	@Column
-	private int quantity;
+	private long quantity;
+	@Column
+	private long threholdLimit;
+	@Column
+	private String channelSKU;
 	@Column
 	private Date productDate;
 	@Column
 	private String productSkuCode;
 	@Column
 	private String categoryName;
-	@OneToOne(cascade=CascadeType.ALL)	
+	@OneToOne(cascade=CascadeType.PERSIST)	
+	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private Category category;
 	public int getProductId() {
 		return productId;
@@ -62,12 +69,6 @@ public class Product {
 	public void setProductPrice(float productPrice) {
 		this.productPrice = productPrice;
 	}
-	public int getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
 	public Category getCategory() {
 		return category;
 	}
@@ -79,6 +80,24 @@ public class Product {
 	}
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
+	}
+	public long getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(long quantity) {
+		this.quantity = quantity;
+	}
+	public long getThreholdLimit() {
+		return threholdLimit;
+	}
+	public void setThreholdLimit(long threholdLimit) {
+		this.threholdLimit = threholdLimit;
+	}
+	public String getChannelSKU() {
+		return channelSKU;
+	}
+	public void setChannelSKU(String channelSKU) {
+		this.channelSKU = channelSKU;
 	}
 	
 	

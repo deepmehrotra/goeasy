@@ -33,9 +33,11 @@ import com.goeasy.helper.SaveContents;
 import com.goeasy.helper.ValidateUpload;
 import com.goeasy.model.Order;
 import com.goeasy.model.Partner;
+import com.goeasy.model.Product;
 import com.goeasy.service.DownloadService;
 import com.goeasy.service.OrderService;
 import com.goeasy.service.PartnerService;
+import com.goeasy.service.ProductService;
 
 
 /**
@@ -53,6 +55,8 @@ public class OrderController {
  private SaveContents saveContents;
  @Autowired
  private PartnerService partnerService;
+ @Autowired
+ private ProductService productService;
  
  private static final String UPLOAD_DIR="upload";
  
@@ -79,6 +83,7 @@ public ModelAndView saveOrder(@ModelAttribute("command")OrderBean orderBean,
 public void getXLS(HttpServletResponse response,@RequestParam(value="sheetvalue")String sheetvalue) throws ClassNotFoundException {
 	
 	// Delegate to downloadService. Make sure to pass an instance of HttpServletResponse 
+	System.out.println(" Downloading the sheet: "+sheetvalue);
 	if(sheetvalue!=null)
 	{ 
 		if(sheetvalue.equals("ordersummary"))
@@ -113,6 +118,10 @@ public void getXLS(HttpServletResponse response,@RequestParam(value="sheetvalue"
 		{
 			downloadService.downloadPOPaymentXLS(response);
 		}
+		else if(sheetvalue.equals("expenseSummary"))
+		{
+			downloadService.downloadExpensesXLS(response);
+		}
 	}
 }
 
@@ -128,8 +137,9 @@ public String displayForm() {
 	}*/
 
 @RequestMapping(value = "/seller/downloadOrderDA", method = RequestMethod.GET)
-public ModelAndView displayDownloadForm(@RequestParam("value") String value) {
-	System.out.println("Inside Payment orders  viewpayments uploadId"+value);
+public ModelAndView displayDownloadForm(@RequestParam("value") String value,@ModelAttribute("uploadForm") FileUploadForm uploadForm,
+		Model map) {
+	System.out.println("Inside download orders  viewpayments uploadId"+value);
 	Map<String, Object> model = new HashMap<String, Object>();
 	model.put("downloadValue",value);
 	
@@ -137,7 +147,8 @@ public ModelAndView displayDownloadForm(@RequestParam("value") String value) {
  }
 
 @RequestMapping(value = "/seller/uploadOrderDA", method = RequestMethod.GET)
-public ModelAndView displayUploadForm(@RequestParam("value") String value) {
+public ModelAndView displayUploadForm(@RequestParam("value") String value,@ModelAttribute("uploadForm") FileUploadForm uploadForm,
+		Model map) {
 	System.out.println("Inside Payment orders  viewpayments uploadId"+value);
 	Map<String, Object> model = new HashMap<String, Object>();
 	model.put("uploadValue",value);
@@ -204,6 +215,9 @@ public ModelAndView save(HttpServletRequest request,@ModelAttribute("uploadForm"
 			case "poPaymentSummary" :
 		 		saveContents.savePoPaymetnDetails(files.get(0),sellerId);
 		 		break;
+			case "expenseSummary" :
+		 		saveContents.saveExpenseDetails(files.get(0),sellerId);
+		 		break;
 		 		
 		 }
 		 inputStream = files.get(0).getInputStream();
@@ -264,8 +278,11 @@ public ModelAndView viewOrderDailyAct(HttpServletRequest request,@ModelAttribute
   BindingResult result) {
  Map<String, Object> model = new HashMap<String, Object>();
  Order order=orderService.getOrder(orderBean.getOrderId());
+ Product product = productService.getProduct(order.getProductSkuCode(), HelperClass.getSellerIdfromSession(request));
  System.out.println(" Payment difference :"+order.getOrderPayment().getPaymentDifference());
  model.put("order",  ConverterClass.prepareOrderBean(order));
+ if(product!=null)
+ model.put("productCost", product.getProductPrice());
  return new ModelAndView("dailyactivities/viewOrder", model);
 }
 

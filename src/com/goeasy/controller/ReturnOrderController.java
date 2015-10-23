@@ -24,6 +24,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.goeasy.bean.OrderBean;
 import com.goeasy.helper.ConverterClass;
+import com.goeasy.helper.DateDeserializer;
+import com.goeasy.helper.DateSerializer;
 import com.goeasy.helper.FileUploadForm;
 import com.goeasy.helper.HelperClass;
 import com.goeasy.helper.SaveContents;
@@ -73,7 +75,11 @@ public ModelAndView saveReturnOrder(HttpServletRequest request,@ModelAttribute("
  @RequestMapping(value="/seller/findOrderDA", method = RequestMethod.POST)
  public @ResponseBody String findOrderDA(HttpServletRequest request) {
   Map<String, Object> model = new HashMap<String, Object>();
-  Gson gson = new GsonBuilder().setPrettyPrinting().create();
+ // Gson gson = new GsonBuilder().setPrettyPrinting().create();
+  GsonBuilder gsonBuilder = new GsonBuilder();
+	gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+	gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
+	Gson gson = gsonBuilder.setPrettyPrinting().create();
   System.out.println(" Inside find order method controller");
   List<OrderBean> orderlist=null;
   List<Order> temporaryorderlist=null;
@@ -85,6 +91,7 @@ public ModelAndView saveReturnOrder(HttpServletRequest request,@ModelAttribute("
   String searchType=request.getParameter("searchType");
   String searchDateCriteria=request.getParameter("searchDateCriteria");
   String action=request.getParameter("action");
+  
   System.out.println(" Getting value from request :  action  :"+action+  "  searchColumn :"+searchColumn +"searchString : "+searchString+" searchType :"+searchType
  +" searchDateCriteria : "+searchDateCriteria +" startdate :"+request.getParameter("startDate")+" enddate :"+request.getParameter("endDate"));
   
@@ -117,6 +124,7 @@ System.out.println("*** Returnid  : "+request.getParameter("returnId"));
 					  ordertemp.getOrderReturnOrRTO().setReturnOrRTOId("");
 					  ordertemp.getOrderReturnOrRTO().setReturnDate(new Date("01/01/1900"));
 					  ordertemp.getOrderReturnOrRTO().setReturnOrRTOreason("");
+					  
 				  }
 				  orderlist.add(ConverterClass.prepareOrderBean(ordertemp));
 			  }
@@ -170,6 +178,7 @@ System.out.println("*** Returnid  : "+request.getParameter("returnId"));
 	  String returnorrtoQty=request.getParameter("returnorrtoQty");
 	  String returnOrRTOreason=request.getParameter("returnOrRTOreason");
 	  String returnId=request.getParameter("returnId");
+	  String returnOrRTOstatus=request.getParameter("returnOrRTOstatus");
 	  System.out.println("  *************** returnId :"+returnId);
 	  System.out.println(" Check:orderId: "+orderId+
 			  " >channelOrderID >>"+channelOrderID+
@@ -213,6 +222,10 @@ System.out.println("*** Returnid  : "+request.getParameter("returnId"));
 	  if(returnOrRTOreason!=null&&StringUtils.isNotEmpty(returnOrRTOreason))
 	  {
 		  orderReturn.setReturnOrRTOreason(returnOrRTOreason);
+	  }
+	  if(returnOrRTOstatus!=null&&StringUtils.isNotEmpty(returnOrRTOstatus))
+	  {
+		  orderReturn.setReturnOrRTOstatus(returnOrRTOstatus);
 	  }
 	  order.setOrderReturnOrRTO(orderReturn);
 	  System.out.println("set order");

@@ -20,4 +20,6 @@ public interface ProductService {
  
  public void updateInventory(String sku , int currentInventory , int quantoAdd , int quantoSub ,int sellerId);
  
+ public Product getProduct(String skuCode, int sellerId);
+ 
 }

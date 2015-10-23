@@ -17,6 +17,8 @@ public class OrderPaymentBean {
 	private int paymentUploadId;
 	private int sellerId;
 	private String paymentCycle;
+	private Date paymentCycleStart;
+	private Date paymentCycleEnd;
 	public int getOrderpayId() {
 		return orderpayId;
 	}
@@ -91,6 +93,18 @@ public class OrderPaymentBean {
 	}
 	public void setPaymentDifference(double paymentDifference) {
 		this.paymentDifference = paymentDifference;
+	}
+	public Date getPaymentCycleStart() {
+		return paymentCycleStart;
+	}
+	public void setPaymentCycleStart(Date paymentCycleStart) {
+		this.paymentCycleStart = paymentCycleStart;
+	}
+	public Date getPaymentCycleEnd() {
+		return paymentCycleEnd;
+	}
+	public void setPaymentCycleEnd(Date paymentCycleEnd) {
+		this.paymentCycleEnd = paymentCycleEnd;
 	}
 
 }

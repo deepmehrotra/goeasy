@@ -31,7 +31,7 @@ public class Expenses {
 	@Column
 	private double amount;
 	@Column(name="expenditure")
-	private double expenditureByperson;
+	private String expenditureByperson;
 	@Column
 	private String paidTo;
 	@Column
@@ -87,10 +87,10 @@ public class Expenses {
 	public void setSellerId(int sellerId) {
 		this.sellerId = sellerId;
 	}
-	public double getExpenditureByperson() {
+	public String getExpenditureByperson() {
 		return expenditureByperson;
 	}
-	public void setExpenditureByperson(double expenditureByperson) {
+	public void setExpenditureByperson(String expenditureByperson) {
 		this.expenditureByperson = expenditureByperson;
 	}
 	public String getPaidTo() {

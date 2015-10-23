@@ -42,6 +42,24 @@
                 calendarWeeks: true,
                 autoclose: true
             });
+       
+       if('${partner.paymentType}'=='paymentcycle')
+    	   $("#paymentcycle").prop("checked", true).trigger("click");
+       else if('${partner.paymentType}'=='datewisepay')
+    	   {
+    	   $("#datewisepay").prop("checked", true).trigger("click");
+    	   $('#paymentField1').trigger('change');
+    	  if('${partner.isshippeddatecalc}'!=true)
+    		   {
+    		  $("#noofdaysfromdeliverydate").val('${partner.noofdaysfromshippeddate}');
+    		   }
+    	   }
+       else if('${partner.paymentType}'=='monthly')
+    	   $('#monthly').prop("checked", true).trigger("click");
+    	 
+      if('${partner.tdsApplicable}'=='true')
+    		   $("#tdsApplicable").prop("checked", true);
+    
     });
 </script>
  <div class="row">
@@ -87,37 +105,39 @@
                                     <div class="hr-line-dashed"></div>
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="radio"><label><form:radiobutton path="paymentType" value="paymentcycle" id="optionsRadios1" name="toggler"/>Payment Cycle</label>
+                                    <div class="radio"><label><form:radiobutton path="paymentType" value="paymentcycle" id="paymentcycle" name="toggler"/>Subdivided Monthly</label>
                                     </div>
-                                    <!-- <div class="radio"><label> <input type="radio" value="paymentcycle" id="optionsRadios1" name="toggler">Payment Cycle</label>
-                                    </div> -->
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="radio"><label><form:radiobutton path="paymentType" value="datewisepay" id="optionsRadios1" name="toggler"/>Payment From Delivery </label>
+                                    <div class="radio"><label><form:radiobutton path="paymentType" value="datewisepay" id="datewisepay" name="toggler"/>Delivery/Shipped Date </label>
                                     </div>
-                                    <!-- <div class="radio"><label> <input type="radio" value="datewisepay" id="optionsRadios1" name="toggler"> Payment From Delivery </label>
-                                    </div> -->
                                 </div>
                                 <div class="col-sm-4">
-                                    <div class="radio"><label><form:radiobutton path="paymentType" value="monthly" id="optionsRadios1" name="toggler"/> Monthly payment </label>
+                                    <div class="radio"><label><form:radiobutton path="paymentType" value="monthly" id="monthly" name="toggler"/> Monthly</label>
                                     </div>
-                                    <!-- <div class="radio"><label> <input type="radio" value="monthly" id="optionsRadios1" name="toggler"> Monthly payment </label>
-                                    </div> -->
                                 </div>
+                            
                                 <div class="col-sm-12 radio1" id="blk-paymentcycle">
-                                    <div class="form-group">
-                                        <div class="col-md-3"><form:input path="startcycleday" value="${partner.startcycleday}"  placeholder="Start Date" class="form-control"/></div>
-										<div class="col-md-3"><form:input path="paycycleduration" value="${partner.paycycleduration}" placeholder="Duration of Cycle" class="form-control"/></div>
-                                        <div class="col-md-3"><form:input path="paydaysfromstartday" value="${partner.paydaysfromstartday}"  placeholder="Duration of Payment from Start Date" class="form-control"/></div>
-                                     </div>
-                                    <div class="form-group">
-                                        <label class="col-sm-3 control-label">Payment from</label>
-                                        <div class="col-md-4">
-                                        <form:select path="paycyclefromshipordel" items="${datemap}" class="form-control" id="paymentField"> 
-                                        </form:select>
-                                        </div>
+                                <div class="col-sm-6">
+                                   <div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Cycle Start date</label>
+                                    <div class="col-sm-8"><form:input path="startcycleday" value="${partner.startcycleday}" placeholder="Duration of Payment from Start Date" class="form-control"/></div>
                                     </div>
-                                    <small class="help-block">(For ex: If your Payment cycle is staring from 5th May to 10th May and Payment date for that cycel is 15th May , then you Start Date will have 5 Duration will have 5 and Payment from SD will have 10)</small>
+                                    <div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Cycle End date</label>
+                                    <div class="col-sm-8"><form:input path="paycycleduration" value="${partner.paycycleduration}" placeholder="Duration of Payment from Start Date" class="form-control"/></div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Payment date</label>
+                                    <div class="col-sm-8"><form:input path="paydaysfromstartday"  value="${partner.paydaysfromstartday}" placeholder="Duration of Payment from Start Date" class="form-control"/></div>
+                                    </div>
+
+                                    <div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Payment From</label>
+                                    <div class="col-sm-8">
+                                    <form:select path="paycyclefromshipordel" items="${datemap}" class="form-control" name="account" id="paymentField">
+                                          </form:select></div>
+                                    </div>
+                                    </div>
+                                    <small class="help-block">(For ex: If your first payment cycle of month is staring from 5th May to 10th May and Payment date for that cycel is 15th May , then you Start Date will have 5 End day will have 10 and Payment day will have 15)</small>
                                 </div>
                                 <div class="col-sm-12 radio1" id="blk-datewisepay">
                                     <div class="row">
@@ -126,9 +146,9 @@
                                         </form:select>
                                         </div>
                                         
-                                        <div class="col-md-6 payment-box" id="true"><form:input path="noofdaysfromshippeddate" value="${partner.noofdaysfromshippeddate}"
+                                        <div class="col-md-6 payment-box" id="true"><form:input path="noofdaysfromshippeddate" id="noofdaysfromshippeddate" value="${partner.noofdaysfromshippeddate}"
                                         placeholder="Payment Days From Shipped Date" class="form-control"/></div>
-                                        <div class="col-md-6 payment-box" id="false"><form:input path="noofdaysfromdeliverydate" value="${partner.noofdaysfromdeliverydate}"
+                                        <div class="col-md-6 payment-box" id="false"><form:input path="noofdaysfromdeliverydate" id="noofdaysfromdeliverydate" value="${partner.noofdaysfromdeliverydate}"
                                         placeholder="Payment Days From Delivery Date" class="form-control"/></div>
                                     </div>
                                 </div>
@@ -158,9 +178,7 @@
                                 </div>
                                 <div class="col-sm-12">
                                     <div class="form-group">
-                                    <%-- <div class="col-md-3"><form:input path="taxcategory" value="${partner.taxcategory}" placeholder="Tax Category" class="form-control"/></div>
-                                    <div class="col-md-4 content-rgt"><form:input path="taxrate" value="${partner.taxrate}" placeholder="Tax rate" class="form-control"/> <span>%</span></div>
-                                     --%><div class="col-md-4"><form:checkbox path="tdsApplicable"/> TDS Applicable</div>
+                                    <div class="col-md-4"><form:checkbox path="tdsApplicable" id="tdsApplicable"/> TDS Applicable</div>
                                 </div>
                                 </div>
                                 <div class="col-sm-12">

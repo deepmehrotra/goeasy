@@ -52,4 +52,10 @@ public void updateInventory(String sku , int currentInventory , int quantoAdd , 
 	productDao.updateInventory(sku ,currentInventory ,quantoAdd ,quantoSub ,sellerId);
 }
 
+@Override
+public Product getProduct(String skuCode, int sellerId)
+{
+	return productDao.getProduct(skuCode, sellerId);
+}
+
 }

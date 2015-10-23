@@ -18,5 +18,7 @@ public interface CategoryDao {
 	 
 	 public Category getCategory(int categoryId);
 	 
-	 public void deleteCategory(Category category,int sellerId);
+	 public int deleteCategory(Category category,int sellerId);
+
+	public List<Long> getSKuCount(String catname, int catId, int sellerId);
 }

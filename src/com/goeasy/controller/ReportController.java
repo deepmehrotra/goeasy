@@ -218,10 +218,18 @@ public List<TotalShippedOrder> getSortedList(List<TotalShippedOrder> ttso)
 		i++;
 	}
 	
+	
 	fifthreco.setPcName("Others");
 	returnlist.add(fifthreco);
 	
 	
+	}
+	else if(ttso!=null&&ttso.size()<5&&ttso.size()>0)
+	{
+		for(int i=0;i<ttso.size();i++)
+		{
+			returnlist.add(ttso.get(i));
+		}
 	}
 	
 	return returnlist;

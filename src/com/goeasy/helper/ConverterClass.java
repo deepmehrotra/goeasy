@@ -392,6 +392,10 @@ public class ConverterClass {
 		    bean.setProductCount(category.getProductCount());
 		    bean.setParentCatName(category.getParentCatName());
 		    bean.setSubCategory(prepareListofCategoryBean(category.getSubCategory()));
+		    bean.setCreatedOn(category.getCreatedOn());
+		    bean.setOpeningStock(category.getOpeningStock());
+		    bean.setSkuCount(category.getSkuCount());
+		    bean.setOsUpdate(category.getOsUpdate());
 		  return bean;
 		 }
 	 
@@ -403,6 +407,11 @@ public class ConverterClass {
 		  category.setSubCategory(categoryBean.isSubCategory());
 		  category.setProductCount(categoryBean.getProductCount());
 		  category.setParentCatName(categoryBean.getParentCatName());
+		  category.setCreatedOn(categoryBean.getCreatedOn());
+		  category.setOpeningStock(categoryBean.getOpeningStock());
+		  category.setSkuCount(categoryBean.getSkuCount());
+		  category.setOsUpdate(categoryBean.getOsUpdate());
+
 		  return category;
 		 }
 	 
@@ -419,6 +428,11 @@ public class ConverterClass {
 		    bean.setSubCategory(category.isSubCategory());
 		    bean.setProductCount(category.getProductCount());
 		    bean.setParentCatName(category.getParentCatName());
+		    bean.setCreatedOn(category.getCreatedOn());
+		    bean.setOpeningStock(category.getOpeningStock());
+		    bean.setSkuCount(category.getSkuCount());
+		    bean.setOsUpdate(category.getOsUpdate());
+
 		    
 		    beans.add(bean);
 		   }
@@ -435,6 +449,8 @@ public class ConverterClass {
 		bean.setProductPrice(product.getProductPrice());
 		bean.setProductSkuCode(product.getProductSkuCode());
 		bean.setQuantity(product.getQuantity());
+		bean.setThreholdLimit(product.getThreholdLimit());
+		bean.setChannelSKU(product.getChannelSKU());
 		  return bean;
 		 }
 	 
@@ -447,6 +463,8 @@ public class ConverterClass {
 			bean.setProductSkuCode(product.getProductSkuCode());
 			bean.setQuantity(product.getQuantity());
 			bean.setCategoryName(product.getCategoryName());
+			bean.setThreholdLimit(product.getThreholdLimit());
+			bean.setChannelSKU(product.getChannelSKU());
 		  
 		  return bean;
 		 }
@@ -465,6 +483,8 @@ public class ConverterClass {
 			bean.setProductPrice(product.getProductPrice());
 			bean.setProductSkuCode(product.getProductSkuCode());
 			bean.setQuantity(product.getQuantity());
+			bean.setThreholdLimit(product.getThreholdLimit());
+			bean.setChannelSKU(product.getChannelSKU());
 		    beans.add(bean);
 		   }
 		  }
@@ -537,7 +557,7 @@ public class ConverterClass {
 			 bean.setCreatedOn(category.getCreatedOn());
 			 bean.setExpcatDescription(category.getExpcatDescription());
 			 bean.setExpcatName(category.getExpcatName());
-			// bean.setExpenses(prepareListofExpenseBean(category.getExpenses()));
+			bean.setExpenses(prepareListofExpenseBean(category.getExpenses()));
 		    
 		    beans.add(bean);
 		   }
@@ -659,6 +679,8 @@ public class ConverterClass {
 		 orderPayment.setNetPaymentResult(bean.getNetPaymentResult());
 		 orderPayment.setPaymentCycle(bean.getPaymentCycle());
 		 orderPayment.setPaymentDifference(bean.getPaymentDifference());
+		 orderPayment.setPaymentCycleStart(bean.getPaymentCycleStart());
+		 orderPayment.setPaymentCycleEnd(bean.getPaymentCycleEnd());
 		
 		}
 		 return orderPayment;
@@ -679,6 +701,8 @@ public class ConverterClass {
 			 orderPayment.setNetPaymentResult(bean.getNetPaymentResult());
 			 orderPayment.setPaymentCycle(bean.getPaymentCycle());
 			 orderPayment.setPaymentDifference(bean.getPaymentDifference());
+			 orderPayment.setPaymentCycleStart(bean.getPaymentCycleStart());
+			 orderPayment.setPaymentCycleEnd(bean.getPaymentCycleEnd());
 		 }
 		 return orderPayment;
 		 }
@@ -695,6 +719,7 @@ public class ConverterClass {
 		 orderReturn.setReturnOrRTOreason(bean.getReturnOrRTOreason());
 		 orderReturn.setReturnUploadDate(bean.getReturnUploadDate());
 		 orderReturn.setReturnOrRTOChargestoBeDeducted(bean.getReturnOrRTOChargestoBeDeducted());
+		 orderReturn.setReturnOrRTOstatus(bean.getReturnOrRTOstatus());
 		 }
 		 return orderReturn;
 		 }
@@ -711,6 +736,7 @@ public class ConverterClass {
 		 orderReturn.setReturnOrRTOreason(bean.getReturnOrRTOreason());
 		 orderReturn.setReturnUploadDate(bean.getReturnUploadDate());
 		 orderReturn.setReturnOrRTOChargestoBeDeducted(bean.getReturnOrRTOChargestoBeDeducted());
+		 orderReturn.setReturnOrRTOstatus(bean.getReturnOrRTOstatus());
 		 }
 		 return orderReturn;
 		 }

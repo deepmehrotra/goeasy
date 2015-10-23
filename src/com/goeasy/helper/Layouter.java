@@ -274,8 +274,12 @@ public class Layouter {
 		cell22.setCellStyle(headerCellStyle);
 		
 		HSSFCell cell23 = rowHeader.createCell(startColIndex+22);
-		cell23.setCellValue("Seller Notes");
+		cell23.setCellValue("Tax Category");
 		cell23.setCellStyle(headerCellStyle);
+		
+		HSSFCell cell24 = rowHeader.createCell(startColIndex+23);
+		cell24.setCellValue("Seller Notes");
+		cell24.setCellStyle(headerCellStyle);
 		
 		
 		
@@ -313,24 +317,28 @@ public class Layouter {
 		cell1.setCellStyle(headerCellStyle);
 
 		HSSFCell cell2 = rowHeader.createCell(startColIndex+1);
-		cell2.setCellValue("ProductDate");
+		cell2.setCellValue("SkUCode");
 		cell2.setCellStyle(headerCellStyle);
 
 		HSSFCell cell3 = rowHeader.createCell(startColIndex+2);
-		cell3.setCellValue("SkUCode");
+		cell3.setCellValue("Category");
 		cell3.setCellStyle(headerCellStyle);
 
 		HSSFCell cell4 = rowHeader.createCell(startColIndex+3);
-		cell4.setCellValue("Category");
+		cell4.setCellValue("ProductPrice");
 		cell4.setCellStyle(headerCellStyle);
-
-		HSSFCell cell5 = rowHeader.createCell(startColIndex+4);
-		cell5.setCellValue("ProductPrice");
-		cell5.setCellStyle(headerCellStyle);
 	
+		HSSFCell cell5 = rowHeader.createCell(startColIndex+4);
+		cell5.setCellValue("Quantity");
+		cell5.setCellStyle(headerCellStyle);
+		
 		HSSFCell cell6 = rowHeader.createCell(startColIndex+5);
-		cell6.setCellValue("Quantity");
+		cell6.setCellValue("Threshold Limit");
 		cell6.setCellStyle(headerCellStyle);
+		
+		HSSFCell cell7 = rowHeader.createCell(startColIndex+6);
+		cell7.setCellValue("ChanelSKU(Separated by ;)");
+		cell7.setCellStyle(headerCellStyle);
 		
 	
 	}

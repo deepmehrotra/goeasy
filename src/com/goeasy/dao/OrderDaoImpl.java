@@ -4,8 +4,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -60,11 +62,13 @@ public class OrderDaoImpl implements OrderDao {
  	Date reconciledate=null;
  	Customer customer=null;
  	Date tempDate=null;
+ 	Session session=null;
+ 	
  	
  	
  	   try
  	   {
- 	   Session session=sessionFactory.openSession();
+ 	   session=sessionFactory.openSession();
  	   session.beginTransaction();
  	   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
  	   criteria.createAlias("partners", "partner", CriteriaSpecification.LEFT_JOIN)
@@ -72,6 +76,7 @@ public class OrderDaoImpl implements OrderDao {
  	   .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
  	   seller=(Seller)criteria.list().get(0);
  	   seller.getPartners().get(0);
+ 	   float taxpercent=taxDetailService.getTaxCategory(order.getOrderTax().getTaxCategtory(), sellerId).getTaxPercent();
  	   if(seller.getPartners()!=null&&seller.getPartners().size()!=0)
  	   {
  	   reconciledate=getreconciledate(order ,seller.getPartners().get(0), order.getOrderDate());
@@ -87,15 +92,15 @@ public class OrderDaoImpl implements OrderDao {
  	  
  	   if((int)order.getPoPrice()!=0&&order.getPcName().equals("Myntra"))
  	   {
- 		   double taxvalue=order.getPoPrice()-(order.getPoPrice()*(100/(100+seller.getPartners().get(0).getTaxrate())));
+ 		   double taxvalue=order.getPoPrice()-(order.getPoPrice()*(100/(100+taxpercent)));
  		 order.setDiscount((Math.abs(order.getPoPrice()-order.getNetRate())));
  		 order.getOrderTax().setTax(taxvalue);
  	   }
  	   else{
  	   order.setDiscount((Math.abs(order.getOrderMRP()-order.getOrderSP())));
- 	   System.out.println(" Tax cal SP:"+order.getOrderSP()+" >>TAxReate="+seller.getPartners().get(0).getTaxrate()+"  Tax>>"+
+ 	   System.out.println(" Tax cal SP:"+order.getOrderSP()+" >>TAxReate="+taxpercent+"  Tax>>"+
  	   (order.getOrderSP()-(order.getOrderSP()*(100/(100+seller.getPartners().get(0).getTaxrate())))));
- 	  order.getOrderTax().setTax(order.getOrderSP()-(order.getOrderSP()*(100/(100+seller.getPartners().get(0).getTaxrate()))));
+ 	  order.getOrderTax().setTax(order.getOrderSP()-(order.getOrderSP()*(100/(100+taxpercent))));
  	   }
  	   order.setPartnerCommission(order.getOrderSP()-order.getGrossNetRate());
  	   order.setTotalAmountRecieved(order.getNetRate());
@@ -167,14 +172,21 @@ public class OrderDaoImpl implements OrderDao {
  	   session.saveOrUpdate(partner);
  	   session.saveOrUpdate(seller);
  	   }
- 	   session.getTransaction().commit();
- 	   session.close();
+ 	   /*session.getTransaction().commit();
+ 	   session.close();*/
  	   }
  	   catch (Exception e) {
  		   System.out.println("Inside exception in add order "+e.getLocalizedMessage()+" message: "+e.getMessage());
  		   e.printStackTrace();
  		
  	}
+ 	  
+ 		  finally
+ 			{
+ 				session.getTransaction().commit();
+ 				   session.close();
+ 			}
+ 	   
  	
  	
  }
@@ -403,7 +415,7 @@ public void addReturnOrder(String channelOrderId ,OrderRTOorReturn orderReturn,i
 			  
 			   order.setOrderReturnOrRTO(orderReturn);
 			
-		   session.saveOrUpdate(order);
+		  // session.saveOrUpdate(order);
 		  
 		   session.getTransaction().commit();
 		   session.close();
@@ -430,7 +442,7 @@ public List<Order> findOrders(String column , String value ,int sellerId)
 	   session.beginTransaction();
 	   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
 	   criteria.createAlias("orders", "order", CriteriaSpecification.LEFT_JOIN)
-	   .add(Restrictions.eq(searchString, value))
+	   .add(Restrictions.eq(searchString, value).ignoreCase())
 	   .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 	   if(criteria.list().size()!=0)
 	   {
@@ -574,7 +586,7 @@ public List<Order> findOrdersbyCustomerDetails(String column , String value ,int
 public Order addOrderPayment(int orderid, OrderPayment orderPayment,int sellerId)
 {
 	Order order=null;
-	System.out.println("Inside add ordr payment iwtih order id");
+	System.out.println("Inside add ordr payment iwtih order id "+orderid);
 	try
 	{
 		Session session=sessionFactory.openSession();
@@ -981,6 +993,7 @@ public Date getreconciledate(Order order,Partner partner,Date orderdate)
 	int tempsd=0;
 	int temped=0;
 	int enddate=partner.getPaycycleduration();
+	Map<String,Date> returndates=new HashMap<>();
 			
 	System.out.println(" ORder delivery date in rec 2 : "+order.getDeliveryDate() );
 	if(paymentType.equals("paymentcycle"))
@@ -1000,8 +1013,8 @@ public Date getreconciledate(Order order,Partner partner,Date orderdate)
 			if(currentdate<enddate||currentdate==enddate||currentdate==startdate)
 				{
 				fsd=paydate;
-				System.out.println(" Paydate : "+paydate);
-				System.out.println(" Fsd in  condition 1 : "+fsd);
+				System.out.println(" Cycle Start Day :" +startdate);
+				System.out.println(" Cycle End Day :" +enddate);
 				break;
 				}
 			else
@@ -1011,7 +1024,6 @@ public Date getreconciledate(Order order,Partner partner,Date orderdate)
 				startdate=enddate+1;
 				enddate=startdate+(enddate-tempsd);
 				paydate=enddate+(paydate-temped);
-				System.out.println(" startdate in  condition 2 : "+startdate);
 				continue;
 			}
 		}
@@ -1029,7 +1041,10 @@ public Date getreconciledate(Order order,Partner partner,Date orderdate)
 			
 		}
 	}
-	reconciledate=deliverydate;
+	if(!payfromshippingdate)
+	reconciledate=(Date)deliverydate.clone();
+	else
+		reconciledate=(Date)shippeddate.clone();
 	reconciledate.setDate(paydate);
 	System.out.println("reconciledate in paycycle :"+reconciledate);
 	}

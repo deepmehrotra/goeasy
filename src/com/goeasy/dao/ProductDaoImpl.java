@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 import com.goeasy.model.Category;
 import com.goeasy.model.Product;
 import com.goeasy.model.Seller;
+import com.goeasy.model.TaxCategory;
 
 
 /**
@@ -37,9 +38,11 @@ public class ProductDaoImpl implements ProductDao {
 		String sku=product.getProductSkuCode();
 		String productName=product.getProductName();
 		String catName=product.getCategoryName();
-		int quant=product.getQuantity();
+		String skuChannel=product.getChannelSKU();
+		long quant=product.getQuantity();
 		float price=product.getProductPrice();
 		Date proddate=product.getProductDate();
+		Date todayDate=new Date();
 		   try
 		   {
 		   Session session=sessionFactory.openSession();
@@ -61,6 +64,27 @@ public class ProductDaoImpl implements ProductDao {
 			   product.setCategory(productcat);
 			   productcat.getProducts().add(product);
 			   productcat.setProductCount(productcat.getProductCount()+product.getQuantity());
+			   productcat.setSkuCount(productcat.getSkuCount()+1);
+			   
+			   //Update opening stock if not
+			  /* if(productcat.getOsUpdate()!=null)
+				 {
+					 if(productcat.getOsUpdate().getMonth()<todayDate.getMonth())
+							 {
+						 productcat.setOpeningStock(productcat.getProductCount());
+						 productcat.setOsUpdate(todayDate);
+							 }
+					 else if(productcat.getOsUpdate().getMonth()==12)
+					 {
+						 if(todayDate.getMonth()==1)
+						 {
+							 productcat.setOpeningStock(productcat.getProductCount());
+							 productcat.setOsUpdate(todayDate);
+								
+								 
+						 }
+					 }
+				 }*/
 			   session.saveOrUpdate(productcat);
 			   }
 			   if(seller.getProducts()!=null)
@@ -75,7 +99,7 @@ public class ProductDaoImpl implements ProductDao {
 			  productObj.setProductDate(proddate);
 			  productObj.setProductPrice(price);
 			  productObj.setProductSkuCode(sku);
-			  
+			  productObj.setChannelSKU(skuChannel);
 			  productObj.getCategory().setProductCount(productObj.getCategory().getProductCount()-productObj.getQuantity()+quant);
 			  productObj.setQuantity(quant);
 			  session.saveOrUpdate(productObj);
@@ -120,6 +144,41 @@ public class ProductDaoImpl implements ProductDao {
 	}
 
 	@Override
+	 public Product getProduct(String skuCode, int sellerId)
+	 {
+		 Product returnObject=null;
+		 Seller seller=null;
+		  
+		 System.out.println(" ***Insid get product from sku ***"+skuCode);
+		
+			 try
+			 {
+		   Session session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
+		   criteria.createAlias("products", "product", CriteriaSpecification.LEFT_JOIN)
+		   .add(Restrictions.eq("product.productSkuCode", skuCode))
+		   .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		   
+		   if(criteria.list()!=null&&criteria.list().size()!=0)
+		   {
+		   seller=(Seller)criteria.list().get(0);
+		   returnObject=seller.getProducts().get(0);
+		   }
+		   session.getTransaction().commit();
+		   session.close();
+			 }
+			 catch (Exception e) {
+				System.out.println(" Product   DAO IMPL :"+e.getLocalizedMessage());
+				e.printStackTrace();
+			}
+			 
+			 return returnObject;
+		 
+	 }
+	
+	
+	@Override
 	public void deleteProduct(Product product,int sellerId) {
 		 System.out.println(" In Category delete sku id "+product.getProductSkuCode());
 		 //sellerId=4;
@@ -153,10 +212,13 @@ public class ProductDaoImpl implements ProductDao {
 		System.out.println(" Inside inventory update method :"+sku);
 		Product product=null;
 		Seller seller=null;
+		Session session=null;
+		Date todayDate=new Date();
+		
 		//sellerId=4;
 		try
 		{
-		Session session=sessionFactory.openSession();
+			session=sessionFactory.openSession();
 		   session.beginTransaction();
 		   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id",sellerId));
 		   criteria.createAlias("products", "product", CriteriaSpecification.LEFT_JOIN)
@@ -184,15 +246,49 @@ public class ProductDaoImpl implements ProductDao {
 			   product.getCategory().setProductCount(product.getCategory().getProductCount()-quantoSub);
 				  
 		   }
+		   
+		   Category productcat=product.getCategory();
+		   if(productcat!=null)
+		   {
+		   if(productcat.getOsUpdate()!=null)
+			 {
+				 if(productcat.getOsUpdate().getMonth()<todayDate.getMonth())
+						 {
+					 productcat.setOpeningStock(productcat.getProductCount());
+					 productcat.setOsUpdate(todayDate);
+						 }
+				 else if(productcat.getOsUpdate().getMonth()==12)
+				 {
+					 if(todayDate.getMonth()==1)
+					 {
+						 productcat.setOpeningStock(productcat.getProductCount());
+						 productcat.setOsUpdate(todayDate);
+						
+					 }
+				 }
+			 }
+		   else
+		   {
+			   productcat.setOpeningStock(productcat.getProductCount());
+				 productcat.setOsUpdate(todayDate);
+		   }
+		   session.saveOrUpdate(productcat);
+		   }
 		   session.saveOrUpdate(product);
 		   }
-		   session.getTransaction().commit();
-		   session.close();
+		  /* session.getTransaction().commit();
+		   session.close();*/
 		}
 		catch(Exception e)
 		{
 			System.out.println(" Exception in updating inventories  :"+e.getMessage());
 			e.printStackTrace();
+			throw e;
+		}
+		finally
+		{
+			session.getTransaction().commit();
+			   session.close();
 		}
 	}
 

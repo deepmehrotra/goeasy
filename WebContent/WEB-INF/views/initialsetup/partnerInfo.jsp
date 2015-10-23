@@ -46,10 +46,10 @@
                 <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Active Brands</h5>
+                            <h5>Active Sales Channels</h5>
                             <div class="ibox-tools">
-                                <a href="#"  onclick="onclickaddpartner('add',0)" class="btn btn-primary btn-xs" >Add New Brand</a>&nbsp;&nbsp;
-                                 <a href="#"  onclick="onclickaddpartner('partnerDetails',0)" class="btn btn-primary btn-xs" >Partner Details</a>
+                                <a href="#"  onclick="onclickaddpartner('add',0)" class="btn btn-primary btn-xs" >Add Sales Channel</a>&nbsp;&nbsp;
+                                 <a href="#"  onclick="onclickaddpartner('partnerDetails',0)" class="btn btn-primary btn-xs" >Channel Details</a>
                             </div>
                         </div>
                         <div class="ibox-content add-company">
@@ -73,7 +73,7 @@
         <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                         <div class="ibox-title">
-                            <h5>Choose Brands</h5>
+                            <h5>Choose Sales Channels</h5>
                         </div>
                         <div class="ibox-content add-company">
                          <c:if test="${!empty partnertoadd}">

@@ -1,6 +1,7 @@
 package com.goeasy.model;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -31,15 +32,24 @@ public class Category {
 	private boolean isSubCategory;
 	@Column
 	private String parentCatName;
+	@Column
+	private Date createdOn;
+	@Column
+	private long skuCount;
+	@Column
+	private long openingStock;
+	@Column
+	private Date osUpdate;
 	@ManyToOne
 	private Category parent;
 	@OneToMany(cascade=CascadeType.ALL)	
+	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private List<Product> products = new ArrayList<Product>();
-	@OneToMany(mappedBy = "parent",fetch=FetchType.EAGER,cascade={CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+	@OneToMany(mappedBy = "parent",fetch=FetchType.EAGER,cascade={CascadeType.ALL})
 	@Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	private List<Category> subCategory = new ArrayList<Category>();
 	@Column
-	private int productCount;
+	private long productCount;
 	public String getCatName() {
 		return catName;
 	}
@@ -85,10 +95,10 @@ public class Category {
 	public void setParent(Category parent) {
 		this.parent = parent;
 	}
-	public int getProductCount() {
+	public long getProductCount() {
 		return productCount;
 	}
-	public void setProductCount(int productCount) {
+	public void setProductCount(long productCount) {
 		this.productCount = productCount;
 	}
 	public String getParentCatName() {
@@ -96,6 +106,30 @@ public class Category {
 	}
 	public void setParentCatName(String parentCatName) {
 		this.parentCatName = parentCatName;
+	}
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+	public long getSkuCount() {
+		return skuCount;
+	}
+	public void setSkuCount(long skuCount) {
+		this.skuCount = skuCount;
+	}
+	public long getOpeningStock() {
+		return openingStock;
+	}
+	public void setOpeningStock(long openingStock) {
+		this.openingStock = openingStock;
+	}
+	public Date getOsUpdate() {
+		return osUpdate;
+	}
+	public void setOsUpdate(Date osUpdate) {
+		this.osUpdate = osUpdate;
 	}
 
 }

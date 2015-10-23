@@ -53,8 +53,7 @@
                                     <th>Description</th>
                                     <th>Modified On</th>
                                     <th>Percentage</th>
-                                    <th>Partner</th>
-                                    <th>Actions</th>
+                                   <th>Actions</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -66,8 +65,7 @@
                                     <td>${category.taxCatDescription}</td>
                                     <td>${category.uploadDate}</td>
                                     <td>${category.taxPercent}</td>
-                                     <td>${category.partner}</td>
-                                    <td class="tooltip-demo">
+                                     <td class="tooltip-demo">
                                     <a href=""><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
                                 </tr>
                                 </c:forEach>

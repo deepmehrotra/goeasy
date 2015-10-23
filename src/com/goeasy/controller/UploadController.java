@@ -28,9 +28,11 @@ import com.goeasy.helper.SaveContents;
 import com.goeasy.helper.ValidateUpload;
 import com.goeasy.model.Order;
 import com.goeasy.model.OrderPayment;
+import com.goeasy.model.Partner;
 import com.goeasy.model.PaymentUpload;
 import com.goeasy.service.DownloadService;
 import com.goeasy.service.OrderService;
+import com.goeasy.service.PartnerService;
 import com.goeasy.service.PaymentUploadService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -51,6 +53,8 @@ public class UploadController {
 	private DownloadService downloadService;
 @Resource(name="saveContents")
 private SaveContents saveContents;
+@Autowired
+private PartnerService partnerService;
 
  @RequestMapping(value = "/seller/paymentUploadList", method = RequestMethod.GET)
  public ModelAndView paymentUploadList(HttpServletRequest request) {
@@ -140,13 +144,20 @@ public ModelAndView addManualPayment(HttpServletRequest request,@ModelAttribute(
 	System.out.println(" Inside add order payment");
  Map<String, Object> model = new HashMap<String, Object>();
  Map<Integer, String> orderIdmap = new HashMap<>();
+ Map<String, String> partnermap = new HashMap<>();
  int sellerId=HelperClass.getSellerIdfromSession(request);
  List<Order> orderlist=orderService.listOrders(sellerId);
  for(Order order:orderlist)
  {
 	 orderIdmap.put(order.getOrderId(), order.getChannelOrderID());
  }
+ List<Partner> partnerList=partnerService.listPartners(sellerId);
+ for(Partner partner:partnerList)
+ {
+	 partnermap.put(partner.getPcName(), partner.getPcName());
+ }
  model.put("orderIdmap",orderIdmap);
+ model.put("partnermap",partnermap);
  return new ModelAndView("dailyactivities/addManualPayment", model);
 }
 
@@ -171,6 +182,7 @@ else
 	
 }
 payment.setDateofPayment(orderBean.getOrderPayment().getDateofPayment());
+System.out.println("order id in payment controller : "+orderBean.getOrderId());
 order=orderService.addOrderPayment(orderBean.getOrderId(), payment,sellerId);
 
 paymentUpload=paymentUploadService.getManualPayment(sellerId);

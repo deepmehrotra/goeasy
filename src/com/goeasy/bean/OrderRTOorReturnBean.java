@@ -11,6 +11,7 @@ public class OrderRTOorReturnBean {
 	private String returnOrRTOId;
 	private Date returnUploadDate;
 	private double returnOrRTOChargestoBeDeducted;
+	private String returnOrRTOstatus;
 	private int sellerId;
 	
 	public int getReturnId() {
@@ -67,6 +68,12 @@ public class OrderRTOorReturnBean {
 	public void setReturnOrRTOChargestoBeDeducted(
 			double returnOrRTOChargestoBeDeducted) {
 		this.returnOrRTOChargestoBeDeducted = returnOrRTOChargestoBeDeducted;
+	}
+	public String getReturnOrRTOstatus() {
+		return returnOrRTOstatus;
+	}
+	public void setReturnOrRTOstatus(String returnOrRTOstatus) {
+		this.returnOrRTOstatus = returnOrRTOstatus;
 	}
 	
 	

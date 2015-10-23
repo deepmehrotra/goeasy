@@ -11,9 +11,19 @@
 <script type="text/javascript"
     src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script type="text/javascript">
-    function onclickviewCat(id) {
+    function onclickviewCat(value,id) {
+    	var targetUrl="";
+    	if(value=='view')
+    		{
+    		targetUrl='viewInventorygroup.html?id='+id;
+    		}
+    	else
+    		{
+    		alert(" Deleting inventory group");
+    		targetUrl='deleteInventoryGroup.html?id='+id;
+    		}
     	$.ajax({
-            url : 'viewInventorygroup.html?id='+id,
+            url : targetUrl,
             success : function(data) {
                 $('#centerpane').html(data);
             }
@@ -42,6 +52,7 @@
                             </div>
                             </div>
                         <div class="ibox-content">
+                        ${error}
                             <table class="table table-bordered custom-table">
                                 <thead>
                                 <tr>
@@ -49,7 +60,9 @@
                                     <th>#</th>
                                     <th>Inventory Group Name</th>
                                     <th>Created on</th>
-                                    <th>Product category count</th>
+                                    <th>Total SKU count</th>
+                                     <th>Current Stock</th>
+                                      <th>Monthly Opening Stock</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -57,16 +70,13 @@
                                 <c:forEach items="${categories}" var="category" varStatus="loop">
                                 <tr>
                                     <td>${loop.index+1}</td>
-                                    <td><a href="#" onclick="onclickviewCat(${category.id})">${category.catName}</a></td>
+                                    <td><a href="#" onclick="onclickviewCat('view',${category.id})">${category.catName}</a></td>
                                     <td>${category.createdOn}</td>
-                                     <c:if test="${!empty category.subCategory}">
-                                    <%-- <td>${fn:length(category.subCategory)}</td> --%>
-                                    <td>TBD</td>
-                                     </c:if>
-                                    <%--  <td class="tooltip-demo"><a href="#" onclick="onclickviewCat(${category.id})"><i class="fa fa-list-alt text-navy" data-toggle="tooltip" data-placement="top" data-original-title="View"></i></a> 
-                                    <a href=""><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
-                                 --%> <td class="tooltip-demo"><a href=""><i class="fa fa-list-alt text-navy" data-toggle="tooltip" data-placement="top" data-original-title="View"></i></a> 
-                                    <a href=""><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
+                                     <td>${category.skuCount}</td>
+                                      <td>${category.productCount}</td>
+                                       <td>${category.openingStock}</td>
+                                    <td class="tooltip-demo"><a href="#" onclick="onclickviewCat('delete',${category.id})"><i class="fa fa-list-alt text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Delete"></i></a>
+                                    </td>
                                  </tr>
                                </c:forEach>
                                 </tbody>

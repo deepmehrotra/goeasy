@@ -37,6 +37,10 @@ public class OrderPayment {
 	private int paymentUploadId;
 	@Column
 	private String paymentCycle;
+	@Column
+	private Date paymentCycleStart;
+	@Column
+	private Date paymentCycleEnd;
 
 	
 	public String getPaymentdesc() {
@@ -116,6 +120,18 @@ public class OrderPayment {
 	}
 	public void setPaymentDifference(double paymentDifference) {
 		this.paymentDifference = paymentDifference;
+	}
+	public Date getPaymentCycleStart() {
+		return paymentCycleStart;
+	}
+	public void setPaymentCycleStart(Date paymentCycleStart) {
+		this.paymentCycleStart = paymentCycleStart;
+	}
+	public Date getPaymentCycleEnd() {
+		return paymentCycleEnd;
+	}
+	public void setPaymentCycleEnd(Date paymentCycleEnd) {
+		this.paymentCycleEnd = paymentCycleEnd;
 	}
 	
 	

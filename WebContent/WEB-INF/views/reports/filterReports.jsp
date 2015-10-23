@@ -155,40 +155,41 @@
                             <h2><small>Select Headers</small></h2>
 
                             <div class="col-md-3">
+                             <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="temp" id="selectall" name="headers">Select All</label></div>
 
-                                <div class="checkbox"><label> <input type="checkbox" value="orderId" name="headers"> Order Id</label></div>
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="orderId" name="headers"> Order Id</label></div>
 
-                                <div class="checkbox"><label> <input type="checkbox" value="invoiceId" name="headers"> Invoice Id </label></div>
-
-                            </div>
-
-                            <div class="col-md-3">
-
-                                <div class="checkbox"><label> <input type="checkbox" value="Partner" name="headers"> Partner </label></div>
-
-                                <div class="checkbox"><label> <input type="checkbox" value="recievedDate" name="headers"> Recieved Date </label></div>
-
-                                <div class="checkbox"><label> <input type="checkbox" value="status" name="headers"> Status</label></div>
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="invoiceId" name="headers"> Invoice Id </label></div>
 
                             </div>
 
                             <div class="col-md-3">
 
-                                <div class="checkbox"><label> <input type="checkbox" value="shippedDate" name="headers"> Shipped Date </label></div>
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="Partner" name="headers"> Partner </label></div>
 
-                                <div class="checkbox"><label> <input type="checkbox" value="payCycle" name="headers"> Payment Cycle </label></div>
+                                <div class="checkbox"><label> <input type="checkbox"  class="checkbox1" value="recievedDate" name="headers"> Recieved Date </label></div>
 
-                                <div class="checkbox"><label> <input type="checkbox" value="finalStatus" name="headers"> Final Status </label></div>
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="status" name="headers"> Status</label></div>
 
                             </div>
 
                             <div class="col-md-3">
 
-                                <div class="checkbox"><label> <input type="checkbox" value="payDate" name="headers"> Payment Date </label></div>
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="shippedDate" name="headers"> Shipped Date </label></div>
 
-                                <div class="checkbox"><label> <input type="checkbox" value="netPayment" name="headers"> Net Payment </label></div>
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="payCycle" name="headers"> Payment Cycle </label></div>
 
-                                <div class="checkbox"><label> <input type="checkbox" value="payDiff" name="headers"> Payment Difference </label></div>
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="finalStatus" name="headers"> Final Status </label></div>
+
+                            </div>
+
+                            <div class="col-md-3">
+
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="payDate" name="headers"> Payment Date </label></div>
+
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="netPayment" name="headers"> Net Payment </label></div>
+
+                                <div class="checkbox"><label> <input type="checkbox" class="checkbox1" value="payDiff" name="headers"> Payment Difference </label></div>
 
                             </div>
 
@@ -257,6 +258,22 @@
             $("#blk-"+$(this).val()).slideDown();
 
         });
+        
+    
+            $('#selectall').click(function(event) {  //on click 
+            	alert(" Select all ");
+                if(this.checked) { // check select status
+                    $('.checkbox1').each(function() { //loop through each checkbox
+                        this.checked = true;  //select all checkboxes with class "checkbox1"               
+                    });
+                }else{
+                    $('.checkbox1').each(function() { //loop through each checkbox
+                        this.checked = false; //deselect all checkboxes with class "checkbox1"                       
+                    });         
+                }
+            });
+            
+        
 
     });
 
@@ -303,7 +320,3 @@
 </body>
 
 </html>
-
- 
-
- 

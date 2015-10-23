@@ -11,6 +11,8 @@
     <link href="css/plugins/dataTables/dataTables.bootstrap.css" rel="stylesheet">
     <link href="css/plugins/dataTables/dataTables.responsive.css" rel="stylesheet">
     <link href="css/plugins/dataTables/dataTables.tableTools.min.css" rel="stylesheet">
+     <!--morris -->
+    <link href="css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
 </head>
  <body>
  <div id="wrapper">
@@ -321,10 +323,13 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                            <div class="ibox-content">
+                                            <!-- <div class="ibox-content">
                                                 <div class="flot-chart">
                                                     <div class="flot-chart-content" id="flot-line-chart-multi"></div>
                                                 </div>
+                                            </div> -->
+                                            <div class="ibox-content">
+                                                <div id="morris-line-chart"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -412,6 +417,13 @@
 <script src="js/plugins/chartJs/Chart.min.js"></script>
 <script src="js/demo/flot-demo.js"></script>
 
+<!-- Morris -->
+<!-- Morris -->
+<script src="js/plugins/morris/raphael-2.1.0.min.js"></script>
+<script src="js/plugins/morris/morris.js"></script>
+
+<!-- Morris demo data-->
+<script src="js/demo/morris-demo.js"></script>
 
 <!-- Data Tables -->
 <script src="js/plugins/dataTables/jquery.dataTables.js"></script>

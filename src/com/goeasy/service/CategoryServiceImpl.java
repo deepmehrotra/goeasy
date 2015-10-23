@@ -45,9 +45,14 @@ public Category getCategory(int CategoryId) {
 }
 
 @Override
-public void deleteCategory(Category category,int sellerId) {
+public int deleteCategory(Category category,int sellerId) {
 	
-	categoryDao.deleteCategory(category,sellerId);
+	return categoryDao.deleteCategory(category,sellerId);
 }
 
+@Override
+public List<Long> getSKuCount(String catname,int catId, int sellerId)
+{
+	return categoryDao.getSKuCount(catname,catId , sellerId);
+}
 }

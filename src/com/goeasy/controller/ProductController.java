@@ -74,7 +74,9 @@ public class ProductController {
 	   String productName=request.getParameter("productName")!=null?request.getParameter("productName"):"";
 	   String categoryName=request.getParameter("categoryName")!=null?request.getParameter("categoryName"):"";
 	 float productPrice=request.getParameter("productPrice")!=null?Float.valueOf(request.getParameter("productPrice")):0;
-	   int quantity=request.getParameter("quantity")!=null?Integer.parseInt(request.getParameter("quantity")):0;
+	   long quantity=request.getParameter("quantity")!=null?Long.parseLong(request.getParameter("quantity")):0;
+	   long threholdLimit=request.getParameter("threholdLimit")!=null?Long.parseLong(request.getParameter("threholdLimit")):0;
+	   String channelSKU=request.getParameter("channelSKU")!=null?request.getParameter("channelSKU"):"";
 	   
 	   if(productId!=0)
 	   {
@@ -84,12 +86,15 @@ public class ProductController {
 	   else
 	   {
 		   product.setProductDate(new Date());
+		   product.setCategoryName(categoryName);
 	   }
-	   product.setCategoryName(categoryName);
+	   
 	   product.setProductSkuCode(productSkuCode);
 	   product.setProductName(productName);
 	   product.setProductPrice(productPrice);
 	   product.setQuantity(quantity);
+	   product.setThreholdLimit(threholdLimit);
+	   product.setChannelSKU(channelSKU);
 	   productService.addProduct(product, HelperClass.getSellerIdfromSession(request)); 
 	
 	   model.put("Result", "OK");
@@ -143,12 +148,12 @@ public class ProductController {
  	}
 
 
-  @RequestMapping(value="/seller/products", method = RequestMethod.GET)
+ /* @RequestMapping(value="/seller/products", method = RequestMethod.GET)
   public ModelAndView listProducts(HttpServletRequest request) {
    Map<String, Object> model = new HashMap<String, Object>();
    model.put("products",  ConverterClass.prepareListofProductBean(productService.listProducts(HelperClass.getSellerIdfromSession(request))));
    return new ModelAndView("productList", model);
-  }
+  }*/
   
   @RequestMapping(value="/seller/listProductJson", method = RequestMethod.POST)
   public @ResponseBody String listProductsJSON(HttpServletRequest request) {
@@ -188,7 +193,7 @@ public class ProductController {
 	  String jsonArray = gson.toJson(model);
  	   return jsonArray;
   }
-  @RequestMapping(value = "/seller/addProduct", method = RequestMethod.GET)
+  /* @RequestMapping(value = "/seller/addProduct", method = RequestMethod.GET)
   public ModelAndView addOrder(HttpServletRequest request,@ModelAttribute("command")ProductBean productBean,
     BindingResult result) {
    Map<String, Object> model = new HashMap<String, Object>();
@@ -215,7 +220,7 @@ public class ProductController {
    model.put("product", ConverterClass.prepareProductBean(productService.getProduct(productBean.getProductId())));
    model.put("products",  ConverterClass.prepareListofProductBean(productService.listProducts(HelperClass.getSellerIdfromSession(request))));
    return new ModelAndView("addProduct", model);
-  }
+  }*/
 
  @RequestMapping(value = "/seller/saveProductSheet", method = RequestMethod.POST)
  public ModelAndView save(HttpServletRequest request,

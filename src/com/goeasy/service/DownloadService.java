@@ -76,7 +76,7 @@ public class DownloadService {
 		HSSFSheet worksheet = workbook.createSheet("ProductReport");
 		int startRowIndex = 0;
 		int startColIndex = 0;
-		Layouter.buildReport(worksheet, startRowIndex, startColIndex , "Product Report");
+		Layouter.buildReport(worksheet, startRowIndex, startColIndex , "ProductReport");
 		String fileName = "ProductReport.xls";
 		response.setHeader("Content-Disposition", "inline; filename=" + fileName);
 		response.setContentType("application/vnd.ms-excel");

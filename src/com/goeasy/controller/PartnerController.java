@@ -93,7 +93,9 @@ public ModelAndView listAllPartners(HttpServletRequest request) {
  Map<String, Object> model = new HashMap<String, Object>();
  List<PartnerBean> addedlist=ConverterClass.prepareListofPartnerBean(partnerService.listPartners(HelperClass.getSellerIdfromSession(request)));
    model.put("partners",addedlist);
-  return new ModelAndView("initialsetup/partnerDetails", model);
+   System.out.println(" Size of list added  : "+addedlist.size());
+   System.out.println(" Sending respose to partnerdetails page");
+  return new ModelAndView("initialsetup/partnerDetail", model);
 }
 
 @RequestMapping(value = "/seller/savePartnertest", method = RequestMethod.POST)
@@ -191,9 +193,12 @@ public ModelAndView deletePartner(HttpServletRequest request,@ModelAttribute("co
 public ModelAndView editPartner(HttpServletRequest request,@ModelAttribute("command")PartnerBean partnerBean,
    BindingResult result) {
   Map<String, Object> model = new HashMap<String, Object>();
-  
+  Map<String, Object> datemap = new HashMap<String, Object>();
+  datemap.put("default", "Select payment from");
+  datemap.put("true", "Shipping Date");
+  datemap.put("false", "Delivery Date");
+  model.put("datemap", datemap);
   model.put("partner", ConverterClass.preparePartnerBean(partnerService.getPartner(partnerBean.getPcId())));
-  model.put("partners",  ConverterClass.prepareListofPartnerBean(partnerService.listPartners(HelperClass.getSellerIdfromSession(request))));
   return new ModelAndView("initialsetup/addPartner", model);
  }
 

@@ -8,8 +8,7 @@
 <script type="text/javascript">
 
     function submitTaxCategory(){
-    	alert(" Inside tax cat");
-	     $.ajax({
+    	 $.ajax({
                url: $("#addTaxCatForm").attr("action"),
                context: document.body,
                type: 'post',

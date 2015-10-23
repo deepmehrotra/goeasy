@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.goeasy.bean.CategoryBean;
-import com.goeasy.bean.ExpenseCategoryBean;
 import com.goeasy.bean.TaxCategoryBean;
 import com.goeasy.helper.ConverterClass;
 import com.goeasy.helper.HelperClass;
@@ -47,27 +46,174 @@ public class CategoryController {
  @Resource(name="saveContents")
  private SaveContents saveContents;
  
-@RequestMapping(value = "/seller/saveCategory", method = RequestMethod.POST)
-public ModelAndView saveCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean, 
+
+ 
+ @RequestMapping(value = "/seller/changeInventorygroup", method = RequestMethod.GET)
+ public ModelAndView changeInventorygroup(HttpServletRequest request,@RequestParam("catId") String catId,@ModelAttribute("command")CategoryBean categoryBean,
    BindingResult result) {
-	System.out.println("Inside order Ssave");
+ 	System.out.println("*********Inside change intentory category id "+catId);
+ 	Map<String, Object> model = new HashMap<String, Object>();
+ 	List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request)));
+ 	 Map<String,String> catageorymap=new HashMap<String, String>();
+ 	 Category category=categoryService.getCategory(Integer.parseInt(catId));
+ 	 if(category.getSubCategory()!=null)
+ 		 System.out.println("No of subcat :"+category.getSubCategory().size());
+ 	for(CategoryBean bean:categorylist)
+ 	 {
+ 		  catageorymap.put(String.valueOf(bean.getId()), bean.getCatName());
+ 		  
+ 	 }
+ 	 model.put("categorymap", catageorymap);
+ 	  model.put("category", ConverterClass.prepareCategoryBean(category));
+ 	  model.put("subcategory", ConverterClass.prepareListofCategoryBean(category.getSubCategory()));
+ 	  return new ModelAndView("initialsetup/viewInventorygroup", model);
+ }
+
+
+
+@RequestMapping(value = "/seller/deleteInventoryGroup", method = RequestMethod.GET)
+public ModelAndView deleteInventoryGroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
+   BindingResult result) {
+	System.out.println(" Order bean id todelete :"+categoryBean.getId());
+	int sellerId=HelperClass.getSellerIdfromSession(request);
+	
+	int deleted=categoryService.deleteCategory(ConverterClass.prepareCategoryModel(categoryBean),sellerId);
+  Map<String, Object> model = new HashMap<String, Object>();
+  if(deleted==0)
+  {
+  model.put("error", "Cannot delete Inventory Group,first delete its product categories");
+  }
+  List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(sellerId));
+	 if(categorylist!=null&&categorylist.size()!=0)
+	 {
+		for(CategoryBean bean:categorylist)
+		{
+			List<Long> sum=categoryService.getSKuCount(bean.getCatName(), bean.getId() ,sellerId);
+			System.out.println(" Setting sum into bean in controller");
+			if(sum!=null&&sum.size()!=0)
+			{
+			bean.setSkuCount(sum.get(0));
+			bean.setProductCount(sum.get(1));
+			}
+		}
+	 }
+  model.put("categories", categorylist);
+  return new ModelAndView("initialsetup/inventorygroup", model);
+ }
+
+
+@RequestMapping(value = "/seller/deleteProductCategory", method = RequestMethod.GET)
+public ModelAndView deleteProductCategory(HttpServletRequest request,@RequestParam("parentId") String parentCatId,@ModelAttribute("command")CategoryBean categoryBean,
+   BindingResult result) {
+	System.out.println(" Order bean id todelete :"+categoryBean.getId());
+	int sellerId=HelperClass.getSellerIdfromSession(request);
+	
+	int deleted=categoryService.deleteCategory(ConverterClass.prepareCategoryModel(categoryBean),sellerId);
+  Map<String, Object> model = new HashMap<String, Object>();
+  if(deleted==0)
+  {
+  model.put("error", "Cannot delete Product Category ,some error occured");
+  }
+ List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request)));
+	 Map<String,String> catageorymap=new HashMap<String, String>();
+	 Category category=categoryService.getCategory(Integer.parseInt(parentCatId));
+	 if(category.getSubCategory()!=null)
+		 System.out.println("No of subcat :"+category.getSubCategory().size());
+	for(CategoryBean bean:categorylist)
+	 {
+		  catageorymap.put(String.valueOf(bean.getId()), bean.getCatName());
+		  
+	 }
+	 model.put("categorymap", catageorymap);
+	  model.put("category", ConverterClass.prepareCategoryBean(category));
+	  model.put("subcategory", ConverterClass.prepareListofCategoryBean(category.getSubCategory()));
+	  return new ModelAndView("initialsetup/viewInventorygroup", model);
+ }
+
+
+
+@RequestMapping(value = "/seller/viewInventorygroup", method = RequestMethod.GET)
+public ModelAndView viewsingleInventorygroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
+  BindingResult result) {
+	System.out.println("*********Inside view intentory category id "+categoryBean.getId());
+	Map<String, Object> model = new HashMap<String, Object>();
+	List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request)));
+	 Map<String,String> catageorymap=new HashMap<String, String>();
+	 Category category=categoryService.getCategory(categoryBean.getId());
+	 if(category.getSubCategory()!=null)
+		 System.out.println("No of subcat :"+category.getSubCategory().size());
+	for(CategoryBean bean:categorylist)
+	 {
+		  catageorymap.put(String.valueOf(bean.getId()), bean.getCatName());
+		  
+	 }
+	 model.put("categorymap", catageorymap);
+	  model.put("category", ConverterClass.prepareCategoryBean(category));
+	  model.put("subcategory", ConverterClass.prepareListofCategoryBean(category.getSubCategory()));
+	  return new ModelAndView("initialsetup/viewInventorygroup", model);
+}
+@RequestMapping(value = "/seller/inventoryGroups", method = RequestMethod.GET)
+public ModelAndView inventorygroups(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
+  BindingResult result) {
+	System.out.println(" Inside inventory controller");
+	int sellerId=HelperClass.getSellerIdfromSession(request);
+	 Map<String, Object> model = new HashMap<String, Object>();
+	 List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(sellerId));
+	 if(categorylist!=null&&categorylist.size()!=0)
+	 {
+		for(CategoryBean bean:categorylist)
+		{
+			List<Long> sum=categoryService.getSKuCount(bean.getCatName(), bean.getId() ,sellerId);
+			System.out.println(" Setting sum into bean in controller");
+			if(sum!=null&&sum.size()!=0)
+			{
+			bean.setSkuCount(sum.get(0));
+			bean.setProductCount(sum.get(1));
+			bean.setOpeningStock(sum.get(2));
+			}
+		}
+	 }
+	  model.put("categories", categorylist);
+	  return new ModelAndView("initialsetup/inventorygroup", model);
+}
+
+
+@RequestMapping(value = "/seller/saveInventoryGroup", method = RequestMethod.POST)
+public ModelAndView saveInventoryGroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean, 
+   BindingResult result) {
+	System.out.println("Inside category Ssave");
 	System.out.println(" category id :"+categoryBean.getCatName());
 	categoryBean.setSubCategory(false);
 	Category category = ConverterClass.prepareCategoryModel(categoryBean);
 	categoryService.addCategory(category,HelperClass.getSellerIdfromSession(request));
-  return new ModelAndView("redirect:/seller/addCategory.html");
+  return new ModelAndView("redirect:/seller/inventoryGroups.html");
  }
 
-@RequestMapping(value = "/seller/saveSubCategory", method = RequestMethod.POST)
-public ModelAndView saveSubCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean, 
-   BindingResult result) {
-	System.out.println("Inside order Ssave");
-	System.out.println(" category id :"+categoryBean.getParentCatName());
+
+
+@RequestMapping(value = "/seller/saveCatInventory", method = RequestMethod.POST)
+public ModelAndView saveCatInventory(@ModelAttribute("command")CategoryBean categoryBean, 
+   BindingResult result,HttpServletRequest request) {
+	System.out.println("Inside category  Ssave");
+	System.out.println("********* parent category name :"+categoryBean.getParentCatName());
+	String parentcatid=request.getParameter("parentid");
+	System.out.println(" Parent id in sav vhild : "+parentcatid);
 	categoryBean.setSubCategory(true);
 	Category category = ConverterClass.prepareCategoryModel(categoryBean);
 	categoryService.addCategory(category,HelperClass.getSellerIdfromSession(request));
-  return new ModelAndView("redirect:/seller/addCategory.html");
+  return new ModelAndView("redirect:/seller/viewInventorygroup.html?id="+parentcatid);
  }
+
+
+@RequestMapping(value = "/seller/addInventoryGroup", method = RequestMethod.GET)
+public ModelAndView addInventoryGroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
+  BindingResult result) {
+ Map<String, Object> model = new HashMap<String, Object>();
+ model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
+ return new ModelAndView("initialsetup/addInventoryGroup", model);
+}
+
+//Code for Implementation of Tax Categories
 
 @RequestMapping(value = "/seller/saveTaxCategory", method = RequestMethod.POST)
 public ModelAndView saveTaxCategory(HttpServletRequest request,@ModelAttribute("command")TaxCategoryBean taxCategoryBean, 
@@ -95,7 +241,32 @@ public String addTaxCategory(HttpServletRequest request,@ModelAttribute("command
 return "initialsetup/addTaxCategory";
 }
 
- @RequestMapping(value="/seller/categories", method = RequestMethod.GET)
+
+/*@RequestMapping(value = "/seller/saveCategory", method = RequestMethod.POST)
+public ModelAndView saveCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean, 
+   BindingResult result) {
+	System.out.println("Inside order Ssave");
+	System.out.println(" category id :"+categoryBean.getCatName());
+	categoryBean.setSubCategory(false);
+	Category category = ConverterClass.prepareCategoryModel(categoryBean);
+	categoryService.addCategory(category,HelperClass.getSellerIdfromSession(request));
+  return new ModelAndView("redirect:/seller/addCategory.html");
+ }
+
+@RequestMapping(value = "/seller/saveSubCategory", method = RequestMethod.POST)
+public ModelAndView saveSubCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean, 
+   BindingResult result) {
+	System.out.println("Inside order Ssave");
+	System.out.println(" category id :"+categoryBean.getParentCatName());
+	categoryBean.setSubCategory(true);
+	Category category = ConverterClass.prepareCategoryModel(categoryBean);
+	categoryService.addCategory(category,HelperClass.getSellerIdfromSession(request));
+  return new ModelAndView("redirect:/seller/addCategory.html");
+ }*/
+
+
+
+/* @RequestMapping(value="/seller/categories", method = RequestMethod.GET)
  public ModelAndView listCategory(HttpServletRequest request) {
   Map<String, Object> model = new HashMap<String, Object>();
   model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
@@ -108,116 +279,8 @@ return "initialsetup/addTaxCategory";
   Map<String, Object> model = new HashMap<String, Object>();
   model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
   return new ModelAndView("addCategory", model);
- }
- 
- @RequestMapping(value = "/seller/changeInventorygroup", method = RequestMethod.GET)
- public ModelAndView changeInventorygroup(HttpServletRequest request,@RequestParam("catId") String catId,@ModelAttribute("command")CategoryBean categoryBean,
-   BindingResult result) {
- 	System.out.println("*********Inside change intentory category id "+catId);
- 	Map<String, Object> model = new HashMap<String, Object>();
- 	List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request)));
- 	 Map<String,String> catageorymap=new HashMap<String, String>();
- 	 Category category=categoryService.getCategory(Integer.parseInt(catId));
- 	 if(category.getSubCategory()!=null)
- 		 System.out.println("No of subcat :"+category.getSubCategory().size());
- 	for(CategoryBean bean:categorylist)
- 	 {
- 		  catageorymap.put(String.valueOf(bean.getId()), bean.getCatName());
- 		  
- 	 }
- 	 model.put("categorymap", catageorymap);
- 	  model.put("category", ConverterClass.prepareCategoryBean(category));
- 	  model.put("subcategory", ConverterClass.prepareListofCategoryBean(category.getSubCategory()));
- 	  return new ModelAndView("initialsetup/viewInventorygroup", model);
- }
- 
- @RequestMapping(value = "/seller/addSubCategory", method = RequestMethod.GET)
- public ModelAndView addSubCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
-   BindingResult result) {
-  Map<String, Object> model = new HashMap<String, Object>();
-  List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request)));
-  Map<String,String> catageorymap=new HashMap<String, String>();
-  for(CategoryBean bean:categorylist)
-  {
-	  catageorymap.put(String.valueOf(bean.getId()), bean.getCatName());
-	  
-  }
-  model.put("categorymap", catageorymap);
-  model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request))));
-  return new ModelAndView("addSubCategory", model);
- }
-
-
-@RequestMapping(value = "/seller/deleteCategory", method = RequestMethod.GET)
-public ModelAndView deleteCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
-   BindingResult result) {
-	System.out.println(" Order bean id todelete :"+categoryBean.getId());
-	categoryService.deleteCategory(ConverterClass.prepareCategoryModel(categoryBean),HelperClass.getSellerIdfromSession(request));
-  Map<String, Object> model = new HashMap<String, Object>();
-  model.put("category", null);
-  model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
-  return new ModelAndView("addCategory", model);
- }
-
-
- 
-@RequestMapping(value = "/seller/editCategory", method = RequestMethod.GET)
-public ModelAndView editCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
-   BindingResult result) {
-  Map<String, Object> model = new HashMap<String, Object>();
-  model.put("category", ConverterClass.prepareCategoryBean(categoryService.getCategory(categoryBean.getId())));
-  model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
-  return new ModelAndView("addCategory", model);
- }
-
-@RequestMapping(value = "/seller/viewInventorygroup", method = RequestMethod.GET)
-public ModelAndView viewsingleInventorygroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
-  BindingResult result) {
-	System.out.println("*********Inside view intentory category id "+categoryBean.getId());
-	Map<String, Object> model = new HashMap<String, Object>();
-	List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request)));
-	 Map<String,String> catageorymap=new HashMap<String, String>();
-	 Category category=categoryService.getCategory(categoryBean.getId());
-	 if(category.getSubCategory()!=null)
-		 System.out.println("No of subcat :"+category.getSubCategory().size());
-	for(CategoryBean bean:categorylist)
-	 {
-		  catageorymap.put(String.valueOf(bean.getId()), bean.getCatName());
-		  
-	 }
-	 model.put("categorymap", catageorymap);
-	  model.put("category", ConverterClass.prepareCategoryBean(category));
-	  model.put("subcategory", ConverterClass.prepareListofCategoryBean(category.getSubCategory()));
-	  return new ModelAndView("initialsetup/viewInventorygroup", model);
-}
-@RequestMapping(value = "/seller/inventoryGroups", method = RequestMethod.GET)
-public ModelAndView inventorygroups(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
-  BindingResult result) {
-	System.out.println(" Inside inventory controller");
-	 Map<String, Object> model = new HashMap<String, Object>();
-	  model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request))));
-	  return new ModelAndView("initialsetup/inventorygroup", model);
-}
-
-@RequestMapping(value = "/seller/addInventoryGroup", method = RequestMethod.GET)
-public ModelAndView addInventoryGroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
-  BindingResult result) {
- Map<String, Object> model = new HashMap<String, Object>();
- model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
- return new ModelAndView("initialsetup/addInventoryGroup", model);
-}
-@RequestMapping(value = "/seller/saveInventoryGroup", method = RequestMethod.POST)
-public ModelAndView saveInventoryGroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean, 
-   BindingResult result) {
-	System.out.println("Inside category Ssave");
-	System.out.println(" category id :"+categoryBean.getCatName());
-	categoryBean.setSubCategory(false);
-	Category category = ConverterClass.prepareCategoryModel(categoryBean);
-	categoryService.addCategory(category,HelperClass.getSellerIdfromSession(request));
-  return new ModelAndView("redirect:/seller/inventoryGroups.html");
- }
-
-@RequestMapping(value = "/seller/addCatInventorygroup", method = RequestMethod.GET)
+ }*/
+/*@RequestMapping(value = "/seller/addCatInventorygroup", method = RequestMethod.GET)
 public ModelAndView addCatInventorygroup(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
   BindingResult result) {
  Map<String, Object> model = new HashMap<String, Object>();
@@ -231,19 +294,35 @@ public ModelAndView addCatInventorygroup(HttpServletRequest request,@ModelAttrib
  model.put("categorymap", catageorymap);
  model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
  return new ModelAndView("initialsetup/addCatInventorygroup", model);
-}
+}*/
 
-@RequestMapping(value = "/seller/saveCatInventory", method = RequestMethod.POST)
-public ModelAndView saveCatInventory(@ModelAttribute("command")CategoryBean categoryBean, 
-   BindingResult result,HttpServletRequest request) {
-	System.out.println("Inside category  Ssave");
-	System.out.println("********* parent category name :"+categoryBean.getParentCatName());
-	String parentcatid=request.getParameter("parentid");
-	System.out.println(" Parent id in sav vhild : "+parentcatid);
-	categoryBean.setSubCategory(true);
-	Category category = ConverterClass.prepareCategoryModel(categoryBean);
-	categoryService.addCategory(category,HelperClass.getSellerIdfromSession(request));
-  return new ModelAndView("redirect:/seller/viewInventorygroup.html?id="+parentcatid);
+
+
+
+
+/*@RequestMapping(value = "/seller/editCategory", method = RequestMethod.GET)
+public ModelAndView editCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
+   BindingResult result) {
+  Map<String, Object> model = new HashMap<String, Object>();
+  model.put("category", ConverterClass.prepareCategoryBean(categoryService.getCategory(categoryBean.getId())));
+  model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request))));
+  return new ModelAndView("addCategory", model);
+ }*/
+
+
+/* @RequestMapping(value = "/seller/addSubCategory", method = RequestMethod.GET)
+public ModelAndView addSubCategory(HttpServletRequest request,@ModelAttribute("command")CategoryBean categoryBean,
+  BindingResult result) {
+ Map<String, Object> model = new HashMap<String, Object>();
+ List<CategoryBean> categorylist=ConverterClass.prepareListofCategoryBean(categoryService.listCategories(HelperClass.getSellerIdfromSession(request)));
+ Map<String,String> catageorymap=new HashMap<String, String>();
+ for(CategoryBean bean:categorylist)
+ {
+	  catageorymap.put(String.valueOf(bean.getId()), bean.getCatName());
+	  
  }
-
+ model.put("categorymap", catageorymap);
+ model.put("categories",  ConverterClass.prepareListofCategoryBean(categoryService.listParentCategories(HelperClass.getSellerIdfromSession(request))));
+ return new ModelAndView("addSubCategory", model);
+}*/
 }

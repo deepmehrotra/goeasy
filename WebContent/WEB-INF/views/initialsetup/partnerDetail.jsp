@@ -20,9 +20,8 @@
         });
     }
     function onclickAddInventoryGroup() {
-    	alert(" add Inventory group vcalled");
-        $.ajax({
-            url : 'addInventoryGroup.html',
+    	 $.ajax({
+            url : 'addPartner.html',
             success : function(data) {
                 $('#centerpane').html(data);
             }
@@ -38,7 +37,7 @@
                         <div class="ibox-title">
                             <h5>Partners</h5>
                          <div class="ibox-tools">
-                                <a href="#" onclick="onclickAddInventoryGroup()" class="btn btn-primary btn-xs" >Add new Brand</a>
+                                <a href="#" onclick="onclickAddInventoryGroup()" class="btn btn-primary btn-xs" >Add Sales Channel</a>
                             </div>
                             </div>
                         <div class="ibox-content">
@@ -68,7 +67,7 @@
                                     <td>${category.maxReturnAcceptance}</td>
                                     <c:choose>
 									    <c:when test="${category.paymentType == 'paymentcycle'}">
-									    	<td>Payment Cycle</td>                                     
+									    	<td>Subdivided Monthly</td>                                     
 									        <td>${category.startcycleday} to ${category.paycycleduration} ,payment on ${category.paydaysfromstartday}</td>
 									    </c:when>
 									    <c:when test="${category.paymentType == 'datewisepay'}">
@@ -79,7 +78,7 @@
 										    	 </c:when>
 										    	 <c:otherwise>
 										    	 <td>Payment From Delivery date</td> 
-										    	  <td>${category.noofdaysfromdeliverydate} days from delivery date</td>
+										    	  <td>${category.noofdaysfromshippeddate} days from delivery date</td>
 										    	 </c:otherwise>
 										    </c:choose>
 									       

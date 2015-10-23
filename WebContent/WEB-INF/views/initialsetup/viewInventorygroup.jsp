@@ -31,10 +31,10 @@ $(document).ready(function() {
 });
 
 
-    function onclickAddCategory() {
-    	alert("calling add cat" );
+    function onclickDeleteCategory(parentId,catId) {
+    	alert("calling delete cat : "+parentId+" category : "+catId );
         $.ajax({
-            url : 'addCatInventorygroup.html',
+            url : 'deleteProductCategory.html?id='+catId+'&parentId='+parentId,
             success : function(data) {
                 $('#centerpane').html(data);
             }
@@ -93,15 +93,17 @@ $(document).ready(function() {
                                 </div>
                                  </form>
                                 <div class="col-sm-12">
+                                 ${error}
                                     <table class="table table-bordered custom-table">
                                         <thead>
                                         <tr>
                                             <th>#</th>
                                             <th>Product Category Name</th>
                                             <th>Created on</th>
-                                             <th>Product Count</th>
-                                            <th>Alias Name</th>
-                                            <th>Action</th>
+		                                    <th>Total SKU count</th>
+		                                     <th>Current Stock</th>
+		                                      <th>Monthly Opening Stock</th>
+		                                       <th>Action</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -110,10 +112,11 @@ $(document).ready(function() {
                                             <td>${loop.index+1}</td>
                                             <td>${subcategory.catName}</td>
                                             <td>${subcategory.createdOn}</td>
-                                             <td>${subcategory.productCount}</td>
-                                            <td>${subcategory.catDescription}</td>
+                                             <td>${subcategory.skuCount}</td>
+		                                      <td>${subcategory.productCount}</td>
+		                                       <td>${subcategory.openingStock}</td>
                                             <td class="tooltip-demo">
-                                            <a href=""><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
+                                            <a href="#"  onclick="onclickDeleteCategory(${category.id},${subcategory.id})"><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Delete"></i></a></td>
                                         </tr>
                                        </c:forEach>
                                         </tbody>

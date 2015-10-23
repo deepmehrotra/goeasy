@@ -8,7 +8,9 @@ public class ProductBean {
 	private Date productDate;
 	private String productSkuCode;
 	private float productPrice;
-	private int quantity;
+	private long quantity;
+	private long threholdLimit;
+	private String channelSKU;
 	private String categoryName;
 	private CategoryBean category;
 	public int getProductId() {
@@ -41,12 +43,6 @@ public class ProductBean {
 	public void setProductPrice(float productPrice) {
 		this.productPrice = productPrice;
 	}
-	public int getQuantity() {
-		return quantity;
-	}
-	public void setQuantity(int quantity) {
-		this.quantity = quantity;
-	}
 	public CategoryBean getCategory() {
 		return category;
 	}
@@ -58,6 +54,24 @@ public class ProductBean {
 	}
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
+	}
+	public long getThreholdLimit() {
+		return threholdLimit;
+	}
+	public void setThreholdLimit(long threholdLimit) {
+		this.threholdLimit = threholdLimit;
+	}
+	public String getChannelSKU() {
+		return channelSKU;
+	}
+	public void setChannelSKU(String channelSKU) {
+		this.channelSKU = channelSKU;
+	}
+	public void setQuantity(long quantity) {
+		this.quantity = quantity;
+	}
+	public long getQuantity() {
+		return quantity;
 	}
 	
 

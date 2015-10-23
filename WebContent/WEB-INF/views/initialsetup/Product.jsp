@@ -18,7 +18,7 @@
 		<div class="col-lg-12">
 			<div class="ibox float-e-margins">
 				<div class="ibox-title">
-					<h5>Product</h5>
+					<h5>SKUs</h5>
 				</div>
 				<div class="ibox-content overflow-h">
 					<div class="col-lg-12">
@@ -52,13 +52,18 @@ $(document).ready(function () {
 
         //Prepare jtable plugin
         $('#ProductTableContainer').jtable({
-            title: 'Product List',
+            title: 'SKU List',
             paging: true,
             sorting: true,
             selecting: true, //Enable selecting
             multiselect: true, //Allow multiple selecting
             selectingCheckboxes: true, //Show checkboxes on first column
             //selectOnRowClick: false, //Enable this to only select using checkboxes
+            
+              messagesNew: {
+                addNewRecord: 'Add Product',
+                editRecord: 'Edit Product'
+            },
             actions: {
                 listAction: 'listProductJson.html',
                 //deleteAction: '/Demo/DeleteStudent',
@@ -77,27 +82,28 @@ $(document).ready(function () {
 				},
 				productName: {
                 	title: 'Product Title',
-                    width: '23%',
                     list : true,
 					edit : true,
 					create : true,
                     inputClass: 'validate[required]'
                 },
-                productDate: {
-                    title: 'Created On',
-                    list: true,
-                    edit : false,
-					create : false
-                    },
-              productSkuCode: {
+                productSkuCode: {
                     title: 'SKU Code',
                     list : true,
 					edit : true,
 					create : true,				
                     inputClass: 'validate[required]'
                 },
+                productDate: {
+                    title: 'Created On',
+                    list: true,
+                    edit : false,
+					create : false,
+					  inputClass: 'validate[required]'
+                    },
+             
               productPrice: {
-                    title: 'Product Price',
+                    title: 'SKU Price',
                     width: '13%',
                     list : true,
 					edit : true,
@@ -108,12 +114,28 @@ $(document).ready(function () {
                     title: 'Category',
                     width: '12%',
                     list : true,
-					edit : true,
+					edit : false,
 					create : true				
                     //options: 'getProductCategories.html'
                 },
                 quantity: {
-                    title: 'Quantity',
+                    title: 'Stock Available',
+                    width: '15%',
+                    list : true,
+					edit : true,
+					create : true,
+					inputClass: 'validate[required]'
+                },
+                threholdLimit: {
+                    title: 'Threshold Limit',
+                    width: '15%',
+                    list : true,
+					edit : true,
+					create : true,
+					inputClass: 'validate[required]'
+                },
+                channelSKU: {
+                    title: 'Channel SKU(Separated by ;)',
                     width: '15%',
                     list : true,
 					edit : true,
@@ -149,7 +171,7 @@ $(document).ready(function () {
     		});
     });
     
-    
+/*     
 
 function onclickNavigateProduct(value) {
 	var targetUrl ="";
@@ -168,7 +190,7 @@ function onclickNavigateProduct(value) {
             $('#centerpane').html(data);
         }
     });
-}
+} */
  </script>
 </body>
 </html>

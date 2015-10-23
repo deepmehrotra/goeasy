@@ -35,6 +35,7 @@ public class ExpenseDaoImpl implements ExpenseDao {
 	 Seller seller=null;
 	 ExpenseCategory parentcategory=null;
 
+	 System.out.println(" *** Inside add expese add");
 	 try
 	 {
 		/* if(expense.getExpenseId()!=0)
@@ -67,23 +68,17 @@ public class ExpenseDaoImpl implements ExpenseDao {
 			 {
 				 expense.setExpenseCategory(parentcategory);
 				 parentcategory.getExpenses().add(expense);
-				
-
 			 }
-
-
-
 			 System.out.println(" Added parent category to seller");
 			 session.saveOrUpdate(parentcategory);
-			 session.saveOrUpdate(expense);
-
-
+			// session.saveOrUpdate(expense);
 			 session.getTransaction().commit();
 			 session.close();
 		// }
 	 }
 	 catch (Exception e) {
 		 System.out.println("Inside exception  "+e.getLocalizedMessage());
+		 e.printStackTrace();
 	 }
 
 
@@ -107,7 +102,7 @@ public class ExpenseDaoImpl implements ExpenseDao {
 				   System.out.println("Adding expense cat");
 				   seller.getExpensecategories().add(category);
 			   }
-			   System.out.println("Added expense cat");
+			   System.out.println("saving seller cat");
 		   session.saveOrUpdate(seller);
 		  
 		   session.getTransaction().commit();

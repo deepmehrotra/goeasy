@@ -31,6 +31,8 @@ public class OrderRTOorReturn {
 	private Date returnUploadDate;
 	@Column(name="estimateddeduction")
 	private double returnOrRTOChargestoBeDeducted;
+	@Column
+	private String returnOrRTOstatus;
 	
 	public String getReturnOrRTOreason() {
 		return returnOrRTOreason;
@@ -89,6 +91,12 @@ public class OrderRTOorReturn {
 	public void setReturnOrRTOChargestoBeDeducted(
 			double returnOrRTOChargestoBeDeducted) {
 		this.returnOrRTOChargestoBeDeducted = returnOrRTOChargestoBeDeducted;
+	}
+	public String getReturnOrRTOstatus() {
+		return returnOrRTOstatus;
+	}
+	public void setReturnOrRTOstatus(String returnOrRTOstatus) {
+		this.returnOrRTOstatus = returnOrRTOstatus;
 	}
 	
 	

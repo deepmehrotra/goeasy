@@ -22,6 +22,7 @@ import com.goeasy.bean.CustomerBean;
 import com.goeasy.bean.DebitNoteBean;
 import com.goeasy.bean.ExpenseBean;
 import com.goeasy.bean.OrderBean;
+import com.goeasy.bean.OrderTaxBean;
 import com.goeasy.bean.PoPaymentBean;
 import com.goeasy.model.Order;
 import com.goeasy.model.OrderPayment;
@@ -62,6 +63,7 @@ public class SaveContents {
     	OrderBean order=null;
     	String errorMessage=null;
     	CustomerBean customerBean=null;
+    	OrderTaxBean otb=null;
     	try{
     		System.out.println("Inside save content -->");
 
@@ -86,6 +88,7 @@ public class SaveContents {
     			System.out.println(entry.getCell(4).toString());
     			order=new OrderBean();
 				customerBean=new CustomerBean();
+				otb=new OrderTaxBean();
     			if(entry.getCell(0)!=null&&StringUtils.isNotBlank(entry.getCell(0).toString()))
     			{
     				order.setChannelOrderID(entry.getCell(0).toString());
@@ -265,13 +268,22 @@ public class SaveContents {
     			}
     			if(entry.getCell(22)!=null&&StringUtils.isNotBlank(entry.getCell(22).toString()))
     			{
-    				order.setSellerNote(entry.getCell(22).toString());;
+    				otb.setTaxCategtory(entry.getCell(22).toString());
+    			}else
+    			{
+    				errorMessage="Error at row "+rowIndex+" ,Tax Category is null";
+    				validaterow=false;
+    			}
+    			if(entry.getCell(23)!=null&&StringUtils.isNotBlank(entry.getCell(23).toString()))
+    			{
+    				order.setSellerNote(entry.getCell(23).toString());;
     			}
     				System.out.println("Sheet values :1 :"+entry.getCell(1)+" 2 :"+entry.getCell(2)+" 3 :"+entry.getCell(3));
     				//Pre save to generate id for use in hierarchy
     				if(validaterow)
     				{
     					order.setCustomer(customerBean);
+    					order.setOrderTax(otb);
     				orderService.addOrder(ConverterClass.prepareModel(order),sellerId);
     				}
     				else
@@ -514,11 +526,14 @@ public class SaveContents {
                 System.out.println(entry.getCell(4).toString());
                 Product product=new Product();
                 product.setProductName(entry.getCell(0).toString());
-                product.setProductDate(new Date(entry.getCell(1).toString()));
-                product.setProductSkuCode(entry.getCell(2).toString());
-                product.setCategoryName(entry.getCell(3).toString());
-                product.setProductPrice(Float.valueOf(entry.getCell(4).toString()));
-                product.setQuantity(Float.valueOf(entry.getCell(5).toString()).intValue());
+                product.setProductDate(new Date());
+                product.setProductSkuCode(entry.getCell(1).toString());
+                product.setCategoryName(entry.getCell(2).toString());
+                product.setProductPrice(Float.valueOf(entry.getCell(3).toString()));
+                product.setQuantity(Float.valueOf(entry.getCell(4).toString()).longValue());
+                product.setThreholdLimit(Float.valueOf(entry.getCell(5).toString()).longValue());
+                if(entry.getCell(6)!=null)
+                product.setChannelSKU(entry.getCell(6).toString());
           
               
                 
@@ -1065,7 +1080,7 @@ public class SaveContents {
         			 }
         			 if(entry.getCell(4)!=null&&StringUtils.isNotBlank(entry.getCell(4).toString()))
         			 {
-        				expensebean.setExpenditureByperson(Double.parseDouble(entry.getCell(4).toString()));
+        				expensebean.setExpenditureByperson(entry.getCell(4).toString());
         			 }
 
         			 if(entry.getCell(5)!=null&&StringUtils.isNotBlank(entry.getCell(5).toString()))
@@ -1079,8 +1094,9 @@ public class SaveContents {
         			 }
         			
         		 }
+        		 System.out.println("Validaterow : "+validaterow+"  error message: "+errorMessage);
         		 
-        		 if(!validaterow)       	 	  
+        		 if(validaterow)       	 	  
         			expenseService.addExpense(ConverterClass.prepareExpenseModel(expensebean), sellerId);
    			 else
    			 {
