@@ -81,7 +81,9 @@
                                      <td>${expense.paidTo}</td>
                                       <td>${expense.expenditureByperson}</td>
                                     <td class="tooltip-demo">
-                                    <a href="editExpense.html?expenseId=${expense.expenseId}"><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
+                                  <%--   <a href="editExpense.html?expenseId=${expense.expenseId}"><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a>
+                                   --%>  <a href="deleteExpense.html?expenseId=${expense.expenseId}"><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Delete"></i></a></td>
+                                
                                 </tr>
                                 </c:forEach>
                                 </c:if>

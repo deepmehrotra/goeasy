@@ -18,7 +18,7 @@ public interface ProductDao {
 	 
 	 public void deleteProduct(Product product,int sellerId);
 	 
-	 public void updateInventory(String sku , int currentInventory , int quantoAdd , int quantoSub,int sellerId);
+	 public void updateInventory(String sku , int currentInventory , int quantoAdd , int quantoSub,boolean status,int sellerId);
 
 	public Product getProduct(String skuCode, int sellerId);
 }

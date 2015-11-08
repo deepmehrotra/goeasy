@@ -13,8 +13,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.goeasy.bean.CategoryBean;
 import com.goeasy.bean.ExpenseBean;
 import com.goeasy.bean.ExpenseCategoryBean;
 import com.goeasy.helper.ConverterClass;
@@ -60,7 +62,17 @@ public ModelAndView saveExpense(HttpServletRequest request,@ModelAttribute("comm
  public ModelAndView listExpenseCategory(HttpServletRequest request) {
 	 System.out.println(" Inside expense category ies");
   Map<String, Object> model = new HashMap<String, Object>();
-  model.put("expenseCategories",  ConverterClass.prepareListofExpenseCategoryBean(expenseService.listExpenseCategories(HelperClass.getSellerIdfromSession(request))));
+  int sellerId=HelperClass.getSellerIdfromSession(request);
+  List<ExpenseCategoryBean> expenseCategories= ConverterClass.prepareListofExpenseCategoryBean(expenseService.listExpenseCategories(sellerId));
+  
+  if(expenseCategories!=null&&expenseCategories.size()>0)
+  {
+	  for(ExpenseCategoryBean bean:expenseCategories)
+	  {
+		  bean.setMonthlyAmount(expenseService.getMonthlyAmount(bean.getExpcategoryId(), sellerId));
+	  }
+  }
+  model.put("expenseCategories",expenseCategories );
   /*return new ModelAndView("expenseCategoryList", model);*/
   return new ModelAndView("initialsetup/expenseCategoryList", model);
  }
@@ -111,25 +123,36 @@ public ModelAndView saveExpense(HttpServletRequest request,@ModelAttribute("comm
 
 
 @RequestMapping(value = "/seller/deleteExpenseCategory", method = RequestMethod.GET)
+/*public ModelAndView deleteExpenseCategory(HttpServletRequest request,@ModelAttribute("command")ExpenseCategoryBean categoryBean,@RequestParam("expcId") String expcategoryId,
+   BindingResult result) {*/
 public ModelAndView deleteExpenseCategory(HttpServletRequest request,@ModelAttribute("command")ExpenseCategoryBean categoryBean,
-   BindingResult result) {
-	System.out.println(" Exp cat bean id todelete :"+categoryBean.getExpcategoryId());
-	expenseService.deleteExpenseCategory(ConverterClass.prepareExpenseCategoryModel(categoryBean),HelperClass.getSellerIdfromSession(request));
+		   BindingResult result) {
+	String expId=request.getParameter("expId");
+	System.out.println(" Exp cat bean id todelete :"+expId);
+	//categoryBean.setExpcategoryId(Integer.parseInt(categoryBean.get));
+	int catdelete=expenseService.deleteExpenseCategory(ConverterClass.prepareExpenseCategoryModel(categoryBean),HelperClass.getSellerIdfromSession(request));
   Map<String, Object> model = new HashMap<String, Object>();
-  model.put("expensecategory", null);
-  model.put("expensecategories",  ConverterClass.prepareListofExpenseCategoryBean(expenseService.listExpenseCategories(HelperClass.getSellerIdfromSession(request))));
-  return new ModelAndView("addExpenseCategory", model);
+  if(catdelete==0)
+  {
+	  model.put("error","Unable to delete Expense Category , first delete subcategories"); 
+  }
+  /*model.put("expensecategory", null);*/
+  model.put("expenseCategories",  ConverterClass.prepareListofExpenseCategoryBean(expenseService.listExpenseCategories(HelperClass.getSellerIdfromSession(request))));
+  return new ModelAndView("initialsetup/expenseCategoryList", model);
  }
 
 @RequestMapping(value = "/seller/deleteExpense", method = RequestMethod.GET)
-public ModelAndView deleteCategory(HttpServletRequest request,@ModelAttribute("command")ExpenseBean expenseBean,
+public ModelAndView deleteExpense(HttpServletRequest request,@ModelAttribute("command")ExpenseBean expenseBean,
    BindingResult result) {
 	System.out.println(" Expense id todelete :"+expenseBean.getExpenseId());
-	expenseService.deleteExpense(ConverterClass.prepareExpenseModel(expenseBean),HelperClass.getSellerIdfromSession(request));
+	int catdelete=expenseService.deleteExpense(ConverterClass.prepareExpenseModel(expenseBean),HelperClass.getSellerIdfromSession(request));
   Map<String, Object> model = new HashMap<String, Object>();
-  model.put("expense", null);
+  if(catdelete==0)
+  {
+	  model.put("error","Unable to delete Expense  , contact admin"); 
+  }
   model.put("expenses",  ConverterClass.prepareListofExpenseBean(expenseService.listExpenses(HelperClass.getSellerIdfromSession(request))));
-  return new ModelAndView("addExpense", model);
+  return new ModelAndView("initialsetup/viewExpenseGroup", model);
  }
 
 
@@ -149,10 +172,13 @@ public ModelAndView editExpense(HttpServletRequest request,@ModelAttribute("comm
   Map<String, Object> model = new HashMap<String, Object>();
   Map<String,String> catmap=new HashMap<String, String>();
   List<ExpenseCategory> categorylist =expenseService.listExpenseCategories(HelperClass.getSellerIdfromSession(request));
+  if(categorylist!=null)
+  {
 	 for(ExpenseCategory expcat:categorylist)
 	 {
 		 catmap.put(expcat.getExpcatName(), expcat.getExpcatName());
 	 }
+  }
 	 model.put("catmap", catmap);
 	 System.out.println("Expense edit id :"+expenseBean.getExpenseId());
   model.put("expense", ConverterClass.prepareExpenseBean(expenseService.getExpense(expenseBean.getExpenseId())));

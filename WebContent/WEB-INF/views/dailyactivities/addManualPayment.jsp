@@ -70,16 +70,11 @@
                                     <div class="col-sm-7"><form:input path="orderPayment.negativeAmount" value="${order.orderPayment.negativeAmount}" 
                                     class="form-control"/></div>
                                     </div>
-                                    <div><label class="col-sm-5 control-label">Positive Amount</label>
-                                    <div class="col-sm-7"><form:input path="orderPayment.positiveamout" value="${order.orderPayment.positiveamout}" 
-                                    class="form-control"/></div>
-                                    </div>
+                                    
                                 </div>
                                 <div class="col-sm-6">
-                                
-                                    
-                                    <div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Quantity</label>
-                                    <div class="col-sm-8"><form:input path="quantity" value="${order.quantity}" 
+                                <div><label class="col-sm-4 control-label">Positive Amount</label>
+                                    <div class="col-sm-8"><form:input path="orderPayment.positiveamout" value="${order.orderPayment.positiveamout}" 
                                     class="form-control"/></div>
                                     </div>
                                     <div ><label class="col-sm-4 control-label">Select Partner</label>

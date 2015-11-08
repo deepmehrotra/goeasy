@@ -99,6 +99,11 @@ $(document).ready(function () {
  						<div class="hr-line-dashed"></div>
 						<div id="ProductInventoryContainer"></div>
 					</div>
+					<div class="col-sm-12">
+                            <div class="hr-line-dashed"></div>
+                                <a href="#" id="upload" class="btn btn-success btn-xs">Bulk Upload Inventory</a>&nbsp;&nbsp; 
+                                  <a href="#" id="download" class="btn btn-success btn-xs">Download Inventory Summary</a> 
+                            </div>
 					
 				</div>
 			</div>

@@ -23,7 +23,9 @@ public interface ExpenseDao {
  
  public ExpenseCategory getExpenseCategory(int expensecatId);
  
- public void deleteExpense(Expenses expense,int sellerId);
+ public int deleteExpense(Expenses expense,int sellerId);
  
- public void deleteExpenseCategory(ExpenseCategory expenseCat,int sellerId);
+ public int deleteExpenseCategory(ExpenseCategory expenseCat,int sellerId);
+
+double getMonthlyAmount(int catId, int sellerId);
 }

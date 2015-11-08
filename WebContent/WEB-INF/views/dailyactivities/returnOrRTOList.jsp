@@ -46,7 +46,7 @@ $(document).ready(function () {
             sorting: true,
 			actions : {
 				listAction : 'findOrderDA.html?action=list',
-				 createAction : 'findOrderDA.html?action=create',
+			//	 createAction : 'findOrderDA.html?action=create',
 				updateAction : 'findOrderDA.html?action=update'
 			},
 			fields : {
@@ -59,6 +59,13 @@ $(document).ready(function () {
 					create :true,
 					edit:true
 				},
+				pcName : {
+					title : 'Partner',
+					width : '10%',
+					list : true,
+					edit : false,
+					create : false
+				},
 				channelOrderID : {
 					title : 'Channel Order Id',
 					width : '10%',
@@ -67,19 +74,19 @@ $(document).ready(function () {
 					edit : true,
 					create : true
 				},
-				invoiceID : {
-					title : 'InvoiceID',
+				status : {
+					title : 'status',
 					width : '10%',
 					edit : false,
 					list : true,
 					create : false
 				},
-				status : {
-					title : 'status',
+				returnLimitCrossed : {
+					title : 'Return Limit',
 					width : '10%',
-					edit : true,
+					edit : false,
 					list : true,
-					create : true
+					create : false
 				},
 				netPaymentResult : {
 					title : 'Payment Result',
@@ -91,6 +98,7 @@ $(document).ready(function () {
 						return data.record.orderPayment.netPaymentResult;
 	           }
 				},
+				
 				returnId : {
 					title : "",
 					width : '0%',
@@ -244,7 +252,7 @@ $('#LoadOnSubmit').click(function (e) {
                         <div class="col-sm-12">
                             <div class="col-sm-4">
                                 <div class="radio"><label>
-                                 <input type="radio" value="searchByProperty" id="searchType" name="toggler">Search by Category</label>
+                                 <input type="radio" value="searchByProperty" id="searchType" name="toggler">Search by Attribute</label>
                                 </div>
                             </div>
                             <div class="col-sm-4">

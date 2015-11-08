@@ -63,24 +63,27 @@
                         </div>
                         <div class="ibox-content overflow-h cus-table-filters">
                         <div class="scroll-y">
+                           <c:if test="${!empty savedOrder}">
+                      		 Your order ${savedOrder} is saved successfully.
+                         	</c:if>
                              <table class="table table-striped table-bordered table-hover dataTables-example" >
                                 <thead>
                                 <tr>
                                     <th></th>
                                     <th>#</th>
-                                    <th>Order ID/PO No</th>
-                                     <th>Order Recieved Date</th>
-                                    <th>AWD</th>
-                                    <th>Invoice ID</th>
-                                    <th>Sub Order ID</th>
-                                    <th>PI Reference</th>
-                                    <th>Logistic Partner</th>
+                                    <th>Order ID</th>
                                     <th>Partner</th>
-                                    <th>Customer</th>
-                                    <th>SKU</th>
-                                   <th>Shipped Date</th>
-                                    <th>Delivery Date</th>
-                                    <th>Action</th>
+                                   <th>SKU</th>
+                                   <th>Invoice ID</th>
+                                   <th>Order Recieved Date</th>
+                                   <th>Shipped Date</th> 
+                                   <th>Estimated Delivery Date</th>
+                                   <th>Estimated Payment Date</th>
+                                   <th>Quantity</th>
+                                   <th>N/R</th>
+                                   <th>Payment Difference</th>
+                                   <th>Status</th>
+                                   <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -90,17 +93,17 @@
                                     <td><input type="checkbox"></td>
                                     <td>${loop.index+1}</td>
                                     <td><a href="#" onclick="onclickNavigateOrder('viewOrder',${order.orderId})">${order.channelOrderID}</a></td>
-                                    <td><fmt:formatDate value="${order.orderDate}" pattern="MMM-dd-YYYY"/></td>
-                                    <td>${order.awbNum}</td>
-                                    <td>${order.invoiceID}</td>
-                                    <td>${order.subOrderID}</td>
-                                    <td>${order.PIreferenceNo}</td>
-                                    <td>${order.logisticPartner}</td>
                                     <td>${order.pcName}</td>
-                                    <td class="tooltip-demo"> <a href="" data-toggle="tooltip" data-placement="top" data-original-title="${order.customer.customerEmail}, ${order.customer.customerPhnNo} , ${order.customer.customerCity}">${order.customer.customerName}</a></td>
                                     <td>${order.productSkuCode}</td>
+                                    <td>${order.invoiceID}</td>
+                                    <td><fmt:formatDate value="${order.orderDate}" pattern="MMM-dd-YYYY"/></td>
                                     <td><fmt:formatDate value="${order.shippedDate}" pattern="MMM-dd-YYYY"/></td>
                                     <td><fmt:formatDate value="${order.deliveryDate}" pattern="MMM-dd-YYYY"/></td>
+                                    <td><fmt:formatDate value="${order.paymentDueDate}" pattern="MMM-dd-YYYY"/></td>
+                                     <td>${order.quantity}</td>
+                                    <td>${order.netRate}</td>
+                                    <td>${order.orderPayment.paymentDifference}</td>
+                                    <td>${order.status}</td>
                                     <td class="tooltip-demo">
                                     <a href="#" onclick="onclickNavigateOrder('editOrder',${order.orderId})"><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
                                 </tr>

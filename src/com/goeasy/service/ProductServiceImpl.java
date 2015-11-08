@@ -47,9 +47,9 @@ public void deleteProduct(Product product,int sellerId) {
 }
 
 @Override
-public void updateInventory(String sku , int currentInventory , int quantoAdd , int quantoSub ,int sellerId)
+public void updateInventory(String sku , int currentInventory , int quantoAdd , int quantoSub ,boolean status,int sellerId)
 {
-	productDao.updateInventory(sku ,currentInventory ,quantoAdd ,quantoSub ,sellerId);
+	productDao.updateInventory(sku ,currentInventory ,quantoAdd ,quantoSub ,status,sellerId);
 }
 
 @Override

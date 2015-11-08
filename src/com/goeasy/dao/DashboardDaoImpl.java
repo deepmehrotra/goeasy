@@ -17,8 +17,12 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.goeasy.bean.DashboardBean;
+import com.goeasy.bean.PendingPaymentsBean;
 import com.goeasy.bean.TotalShippedOrder;
+import com.goeasy.model.Customer;
 import com.goeasy.model.Order;
+import com.goeasy.model.Seller;
 
 
  
@@ -28,8 +32,8 @@ import com.goeasy.model.Order;
  *
  */
 
-@Repository("reportGeneratorDao")
-public class ReportsGeneratorDaoImpl implements ReportsGeneratorDao{
+@Repository("dashboardDao")
+public class DashboardDaoImpl implements DashboardDao{
 
 
  @Autowired
@@ -37,38 +41,44 @@ public class ReportsGeneratorDaoImpl implements ReportsGeneratorDao{
  
  @SuppressWarnings("unchecked")
 @Override
- public TotalShippedOrder getPartnerTSOdetails(String pcName,Date startDate ,Date endDate, int sellerId)
- {
-	 //http://howtodoinjava.com/2014/10/28/hibernate-criteria-queries-tutorial-and-examples/#unique_result
-	 System.out.println(" getPartnerTSOdetails   : pcName :"+pcName+" >>startDate"+startDate+">>endDate :"+endDate);
-	// List<Order> orderlist=null;
-	 TotalShippedOrder ttso=null;
-	  try
+public DashboardBean getDashboardDetails(int sellerId)
+{
+	 DashboardBean dashboardBean=null;
+	 Date endDate=new Date();
+	 endDate.setDate(endDate.getDate()+1);
+	 Date startDate=new Date();
+	 startDate.setDate(1);
+	 startDate.setMonth(0);
+	 
+	 
+	 try
 	   {
 		   Session session=sessionFactory.openSession();
 		   session.beginTransaction();
 		   Criteria criteria=session.createCriteria(Order.class);
-	 	   criteria.createAlias("seller", "seller", CriteriaSpecification.LEFT_JOIN)
+	 	   criteria.createAlias("seller", "seller", CriteriaSpecification.LEFT_JOIN);
+	 	    criteria.createAlias("orderPayment", "orderPayment", CriteriaSpecification.LEFT_JOIN);
+		 criteria.createAlias("orderReturnOrRTO", "orderReturnOrRTO", CriteriaSpecification.LEFT_JOIN)
 	 	   .add(Restrictions.eq("seller.id", sellerId))
-	 	    .add(Restrictions.eq("pcName", pcName))
 	 	   .add(Restrictions.between("orderDate",startDate, endDate));
 	 	  criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 	 	   ProjectionList projList = Projections.projectionList();
 	 	  projList.add(Projections.sum("quantity"));
 	 	 projList.add(Projections.sum("netRate"));
+	 	projList.add(Projections.rowCount());
 	 	criteria.setProjection(projList);
 	 	List<Object[]> results = criteria.list();
 	 	 Iterator iterator1 = results.iterator();
 	     if(results != null){
-             while(iterator1.hasNext()){
-              System.out.println("\n");
-              Object[] recordsRow = (Object[])iterator1.next();
-              System.out.println(" record length:"+recordsRow.length);
-              for(int i = 0; i < recordsRow.length;i++){
-              System.out.print("\t"+recordsRow[i]);
-                          
-             }
-             }
+           while(iterator1.hasNext()){
+            System.out.println("\n");
+            Object[] recordsRow = (Object[])iterator1.next();
+            System.out.println(" record length:"+recordsRow.length);
+            for(int i = 0; i < recordsRow.length;i++){
+            System.out.print("\t"+recordsRow[i]);
+                        
+           }
+           }
 	     }
 	 	
 	    session.getTransaction().commit();
@@ -77,11 +87,271 @@ public class ReportsGeneratorDaoImpl implements ReportsGeneratorDao{
 	   catch (Exception e) {
 		   System.out.println("Inside exception  "+e.getLocalizedMessage());
 	}
-	  return ttso;
- }
+	 
+	 return dashboardBean;
+}
+
+public List<Object[]> orderResultforTime(Session session, Date startDate,Date endDate,int sellerId)
+{
+	List<Object[]> results=null;
+	 try
+	   {
+		  // session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   Criteria criteria=session.createCriteria(Order.class);
+	 	   criteria.createAlias("seller", "seller", CriteriaSpecification.LEFT_JOIN);
+	 	    criteria.createAlias("orderPayment", "orderPayment", CriteriaSpecification.LEFT_JOIN);
+		 criteria.createAlias("orderReturnOrRTO", "orderReturnOrRTO", CriteriaSpecification.LEFT_JOIN)
+	 	   .add(Restrictions.eq("seller.id", sellerId))
+	 	   .add(Restrictions.between("orderDate",startDate, endDate));
+	 	  criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	 	   ProjectionList projList = Projections.projectionList();
+	 	  projList.add(Projections.sum("quantity"));
+	 	 projList.add(Projections.sum("netRate"));
+	 	projList.add(Projections.rowCount());
+	 	criteria.setProjection(projList);
+	 	results = criteria.list();
+	 	 Iterator iterator1 = results.iterator();
+	     if(results != null){
+         while(iterator1.hasNext()){
+          System.out.println("\n");
+          Object[] recordsRow = (Object[])iterator1.next();
+          System.out.println(" record length:"+recordsRow.length);
+          for(int i = 0; i < recordsRow.length;i++){
+          System.out.print("\t"+recordsRow[i]);
+                      
+         }
+         }
+	     }
+	 	
+	    session.getTransaction().commit();
+	  // session.close();
+	   }
+	   catch (Exception e) {
+		   System.out.println("Inside exception  "+e.getLocalizedMessage());
+	}
+	 return results;
+}
+
+
+public List<Object[]> paymentResultforTime(Session session, Date startDate,Date endDate,int sellerId)
+{
+	List<Object[]> results=null;
+	 try
+	   {
+		   session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   Criteria criteria=session.createCriteria(Order.class);
+	 	   criteria.createAlias("seller", "seller", CriteriaSpecification.LEFT_JOIN);
+	 	    criteria.createAlias("orderPayment", "orderPayment", CriteriaSpecification.LEFT_JOIN);
+		 criteria.createAlias("orderReturnOrRTO", "orderReturnOrRTO", CriteriaSpecification.LEFT_JOIN)
+	 	   .add(Restrictions.eq("seller.id", sellerId))
+	 	   .add(Restrictions.between("orderPayment.dateofPayment",startDate, endDate));
+	 	  criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	 	   ProjectionList projList = Projections.projectionList();
+	 	/*  projList.add(Projections.sum("quantity"));
+	 	 projList.add(Projections.sum("netRate"));
+	 	*/projList.add(Projections.rowCount());
+	 	criteria.setProjection(projList);
+	 	results = criteria.list();
+	 	 Iterator iterator1 = results.iterator();
+	     if(results != null){
+         while(iterator1.hasNext()){
+          System.out.println("\n");
+          Object[] recordsRow = (Object[])iterator1.next();
+          System.out.println(" record length:"+recordsRow.length);
+          for(int i = 0; i < recordsRow.length;i++){
+          System.out.print("\t"+recordsRow[i]);
+                      
+         }
+         }
+	     }
+	 	
+	    session.getTransaction().commit();
+	   session.close();
+	   }
+	   catch (Exception e) {
+		   System.out.println("Inside exception  "+e.getLocalizedMessage());
+	}
+	 return results;
+}
+
+public Object[] quarterlyTaxAlert(Session session, Date startDate,Date endDate,int sellerId)
+{
+	List<Object[]> results=null;
+	Object[] resultstoreturn=null;
+	 try
+	   {
+		  // session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   Criteria criteria=session.createCriteria(Order.class);
+	 	   criteria.createAlias("seller", "seller", CriteriaSpecification.LEFT_JOIN);
+	 	   criteria.createAlias("orderTax", "orderTax", CriteriaSpecification.LEFT_JOIN)
+	 	   .add(Restrictions.eq("seller.id", sellerId))
+	 	   .add(Restrictions.between("orderDate",startDate, endDate));
+	 	  criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	 	   ProjectionList projList = Projections.projectionList();
+	 	/*  projList.add(Projections.sum("quantity"));
+	 	 projList.add(Projections.sum("netRate"));
+	 	*/projList.add(Projections.sum("orderTax.tax"));
+	 	projList.add(Projections.sum("orderTax.tdsToDeduct"));
+	 	criteria.setProjection(projList);
+	 	results = criteria.list();
+	 	 Iterator iterator1 = results.iterator();
+	     if(results != null){
+         while(iterator1.hasNext()){
+          System.out.println("\n");
+          Object[] recordsRow = (Object[])iterator1.next();
+          resultstoreturn=recordsRow;
+          System.out.println(" record length:"+recordsRow.length);
+          for(int i = 0; i < recordsRow.length;i++){
+          System.out.print("\t"+recordsRow[i]);
+                      
+         }
+         }
+	     }
+	 	
+	    session.getTransaction().commit();
+	  // session.close();
+	   }
+	   catch (Exception e) {
+		   System.out.println("Inside exception  "+e.getLocalizedMessage());
+	}
+	 return resultstoreturn;
+}
+
+public List<PendingPaymentsBean> ListOfPendingPayment(Session session, Date startDate,Date endDate,int sellerId)
+{
+	List<PendingPaymentsBean> results=null;
+	 try
+	   {
+		   //session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   Criteria criteria=session.createCriteria(Order.class);
+	 	   criteria.createAlias("seller", "seller", CriteriaSpecification.LEFT_JOIN);
+	 	    criteria.createAlias("orderPayment", "orderPayment", CriteriaSpecification.LEFT_JOIN)
+		// criteria.createAlias("orderReturnOrRTO", "orderReturnOrRTO", CriteriaSpecification.LEFT_JOIN)
+	 	   .add(Restrictions.eq("seller.id", sellerId))
+	 	   .add(Restrictions.between("paymentDueDate",startDate, endDate))
+	 	   .add(Restrictions.lt("orderPayment.paymentDifference",0));
+	 	  criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	 	   ProjectionList projList = Projections.projectionList();
+	 	/*  projList.add(Projections.sum("quantity"));
+	 	 projList.add(Projections.sum("netRate"));
+	 	*/projList.add(Projections.rowCount());
+	 	projList.add(Projections.property("channelOrderID"));
+	 	projList.add(Projections.property("pcName"));
+	 	projList.add(Projections.property("paymentDueDate"));
+	 	projList.add(Projections.property("status"));
+	 	projList.add(Projections.property("orderPayment.paymentDifference"));
+	 	projList.add(Projections.property("netRate"));
+	 	criteria.setProjection(projList);
+	 	 criteria.addOrder(org.hibernate.criterion.Order.desc("paymentDueDate"));
+	 	results = criteria.list();
+	 	 Iterator iterator1 = results.iterator();
+	     if(results != null){
+         while(iterator1.hasNext()){
+          System.out.println("\n");
+          Object[] recordsRow = (Object[])iterator1.next();
+          System.out.println(" record length:"+recordsRow.length);
+          for(int i = 0; i < recordsRow.length;i++){
+          System.out.print("\t"+recordsRow[i]);
+                      
+         }
+         }
+	     }
+	 	
+	    session.getTransaction().commit();
+	  //.close();
+	   }
+	   catch (Exception e) {
+		   System.out.println("Inside exception  "+e.getLocalizedMessage());
+	}
+	 return results;
+}
+public Object[] getTotalCustomer(Session session,int sellerId)
+{
+	Object[] recordsRow=null;
+	 try
+	   {
+		   session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   Criteria criteria=session.createCriteria(Customer.class)
+	 	/*   criteria.createAlias("seller", "seller", CriteriaSpecification.LEFT_JOIN);
+	 	    criteria.createAlias("orderPayment", "orderPayment", CriteriaSpecification.LEFT_JOIN);
+		 criteria.createAlias("orderReturnOrRTO", "orderReturnOrRTO", CriteriaSpecification.LEFT_JOIN)
+	 	*/   .add(Restrictions.eq("sellerId", sellerId));
+	 	   //.add(Restrictions.between("orderDate",startDate, endDate));
+	 	  criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	 	   ProjectionList projList = Projections.projectionList();
+	 	  /*projList.add(Projections.sum("quantity"));
+	 	 projList.add(Projections.sum("netRate"));
+	 	*/projList.add(Projections.rowCount());
+	 	criteria.setProjection(projList);
+	 	List<Object[]> results = criteria.list();
+	 	 Iterator iterator1 = results.iterator();
+	     if(results != null){
+        while(iterator1.hasNext()){
+         System.out.println("\n");
+          recordsRow = (Object[])iterator1.next();
+         System.out.println(" record length:"+recordsRow.length);
+        /* for(int i = 0; i < recordsRow.length;i++){
+         System.out.print("\t"+recordsRow[i]);*/
+                     
+        //}
+         System.out.println(recordsRow[0].toString());
+        }
+	     }
+	 	
+	    session.getTransaction().commit();
+	   session.close();
+	   }
+	   catch (Exception e) {
+		   System.out.println("Inside exception  "+e.getLocalizedMessage());
+	}
+	 return recordsRow;
+}
+
+public Object[] getTotalSKUCount(Session session,int sellerId)
+{
+	Object[] recordsRow=null;
+	 try
+	   {
+		   session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
+	 	   criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	 	   ProjectionList projList = Projections.projectionList();
+	 	projList.add(Projections.rowCount());
+	 	projList.add(Projections.sum("product.quantity"));
+	 	//projList.add(Projections.sqlProjection("quantity*productPrice", columnAliases, types));
+	 	criteria.setProjection(projList);
+	 	List<Object[]> results = criteria.list();
+	 	 Iterator iterator1 = results.iterator();
+	     if(results != null){
+        while(iterator1.hasNext()){
+         System.out.println("\n");
+          recordsRow = (Object[])iterator1.next();
+         System.out.println(" record length:"+recordsRow.length);
+        /* for(int i = 0; i < recordsRow.length;i++){
+         System.out.print("\t"+recordsRow[i]);*/
+                     
+        //}
+         System.out.println(recordsRow[0].toString());
+        }
+	     }
+	 	
+	    session.getTransaction().commit();
+	   session.close();
+	   }
+	   catch (Exception e) {
+		   System.out.println("Inside exception  "+e.getLocalizedMessage());
+	}
+	 return recordsRow;
+}
+
  
- 
- @Override
+
  public List<TotalShippedOrder> getAllPartnerTSOdetails(Date startDate ,Date endDate, int sellerId)
  {
 	 //http://howtodoinjava.com/2014/10/28/hibernate-criteria-queries-tutorial-and-examples/#unique_result

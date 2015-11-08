@@ -288,6 +288,10 @@
               document.getElementById('selectReportForm').action = "downloadreport.html";
 
               }
+       else
+    	   {
+    	   document.getElementById('selectReportForm').action = "getReport.html";
+    	   }
 
          $.ajax({
 

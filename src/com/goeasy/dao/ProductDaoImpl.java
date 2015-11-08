@@ -157,13 +157,17 @@ public class ProductDaoImpl implements ProductDao {
 		   session.beginTransaction();
 		   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
 		   criteria.createAlias("products", "product", CriteriaSpecification.LEFT_JOIN)
-		   .add(Restrictions.eq("product.productSkuCode", skuCode))
+		   .add(Restrictions.eq("product.productSkuCode", skuCode).ignoreCase())
 		   .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		   
 		   if(criteria.list()!=null&&criteria.list().size()!=0)
 		   {
 		   seller=(Seller)criteria.list().get(0);
 		   returnObject=seller.getProducts().get(0);
+		   }
+		   else
+		   {
+			   System.out.println("Product sku "+skuCode+" not found");
 		   }
 		   session.getTransaction().commit();
 		   session.close();
@@ -207,7 +211,7 @@ public class ProductDaoImpl implements ProductDao {
 		
 	}
 
-	public void updateInventory(String sku , int currentInventory , int quantoAdd , int quantoSub , int sellerId)
+	public void updateInventory(String sku , int currentInventory , int quantoAdd , int quantoSub ,boolean status, int sellerId)
 	{
 		System.out.println(" Inside inventory update method :"+sku);
 		Product product=null;
@@ -218,13 +222,22 @@ public class ProductDaoImpl implements ProductDao {
 		//sellerId=4;
 		try
 		{
+			if(status)
+			{
 			session=sessionFactory.openSession();
+			}
+			else
+			{
+			session=sessionFactory.getCurrentSession();
+			}
+			if(session==null)
+				session=sessionFactory.openSession();
 		   session.beginTransaction();
 		   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id",sellerId));
 		   criteria.createAlias("products", "product", CriteriaSpecification.LEFT_JOIN)
 		   .add(Restrictions.eq("product.productSkuCode", sku))
 		   .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		   if(criteria.list().size()!=0)
+		   if(criteria.list()!=null&&criteria.list().size()!=0)
 		   {
 		   seller=(Seller)criteria.list().get(0);
 		   product=seller.getProducts().get(0);
@@ -240,11 +253,12 @@ public class ProductDaoImpl implements ProductDao {
 			   product.setQuantity(product.getQuantity()+quantoAdd);
 			   product.getCategory().setProductCount(product.getCategory().getProductCount()+quantoAdd);
 		   }
-		   else if(quantoSub!=0&&!(quantoSub>product.getQuantity()))
+		   else if(quantoSub!=0)
 		   {
+			   System.out.println(" Subtracting quantity from product quantity : "+quantoSub);
 			   product.setQuantity(product.getQuantity()-quantoSub);
 			   product.getCategory().setProductCount(product.getCategory().getProductCount()-quantoSub);
-				  
+				System.out.println(" Quantity after sub :"+product.getQuantity());  
 		   }
 		   
 		   Category productcat=product.getCategory();
@@ -276,6 +290,10 @@ public class ProductDaoImpl implements ProductDao {
 		   }
 		   session.saveOrUpdate(product);
 		   }
+		   else
+		   {
+			   throw new NullPointerException();
+		   }
 		  /* session.getTransaction().commit();
 		   session.close();*/
 		}
@@ -287,8 +305,12 @@ public class ProductDaoImpl implements ProductDao {
 		}
 		finally
 		{
+			if(status)
+			{
+				System.out.println(" Commiting inventory update");
 			session.getTransaction().commit();
 			   session.close();
+			   }
 		}
 	}
 

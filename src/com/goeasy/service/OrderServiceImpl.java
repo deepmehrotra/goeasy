@@ -30,7 +30,6 @@ public class OrderServiceImpl implements OrderService {
 @Override
 @Transactional(propagation = Propagation.REQUIRED, readOnly = false)
 public void addOrder(Order order ,int sellerId) {
-	System.out.println("Inside add order OrderServiceImpl awb :"+order.getAwbNum());
 	orderDao.addOrder(order,sellerId);
 	
 }

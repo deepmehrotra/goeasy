@@ -21,8 +21,8 @@ public class TotalShippedOrder {
 	private double netSaleAmount;
 	private double netSaleAmountPercent;
 	private List<String> cities;
-	private Map<String,Integer> cityQuantity;
-	private Map<String,Integer> cityPercentage;
+	private Map<String,Double> cityQuantity;
+	private Map<String,Double> cityPercentage;
 	private long noOfDeliveredOrder;
 	private double deliveredOrderPercent;
 	private long noOfReturnOrder;
@@ -37,6 +37,10 @@ public class TotalShippedOrder {
 	private double actionableOrdersPercent;
 	private long noOfSettledOrders;
 	private double settledOrdersPercent;
+	private double netPaymentResult;
+	private double netPaymentResultPercent;
+	private double totalPaymentDiffference;
+	private double paymentDiffferencePercent;
 	public long getSaleQuantity() {
 		return saleQuantity;
 	}
@@ -115,16 +119,16 @@ public class TotalShippedOrder {
 	public void setCities(List<String> cities) {
 		this.cities = cities;
 	}
-	public Map<String, Integer> getCityQuantity() {
+	public Map<String, Double> getCityQuantity() {
 		return cityQuantity;
 	}
-	public void setCityQuantity(Map<String, Integer> cityQuantity) {
+	public void setCityQuantity(Map<String, Double> cityQuantity) {
 		this.cityQuantity = cityQuantity;
 	}
-	public Map<String, Integer> getCityPercentage() {
+	public Map<String, Double> getCityPercentage() {
 		return cityPercentage;
 	}
-	public void setCityPercentage(Map<String, Integer> cityPercentage) {
+	public void setCityPercentage(Map<String, Double> cityPercentage) {
 		this.cityPercentage = cityPercentage;
 	}
 	public long getNoOfDeliveredOrder() {
@@ -300,6 +304,31 @@ public class TotalShippedOrder {
 	            return ttso1.netSaleAmount < ttso2.netSaleAmount ? 1 : (ttso1.netSaleAmount > ttso2.netSaleAmount ? -1 : 0);
 	        }
 	    }
+
+		public double getNetPaymentResult() {
+			return netPaymentResult;
+		}
+		public void setNetPaymentResult(double netPaymentResult) {
+			this.netPaymentResult = netPaymentResult;
+		}
+		public double getNetPaymentResultPercent() {
+			return netPaymentResultPercent;
+		}
+		public void setNetPaymentResultPercent(double netPaymentResultPercent) {
+			this.netPaymentResultPercent = netPaymentResultPercent;
+		}
+		public double getTotalPaymentDiffference() {
+			return totalPaymentDiffference;
+		}
+		public void setTotalPaymentDiffference(double totalPaymentDiffference) {
+			this.totalPaymentDiffference = totalPaymentDiffference;
+		}
+		public double getPaymentDiffferencePercent() {
+			return paymentDiffferencePercent;
+		}
+		public void setPaymentDiffferencePercent(double paymentDiffferencePercent) {
+			this.paymentDiffferencePercent = paymentDiffferencePercent;
+		}
 
 }
 

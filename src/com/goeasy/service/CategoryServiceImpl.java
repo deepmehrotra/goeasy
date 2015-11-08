@@ -55,4 +55,10 @@ public List<Long> getSKuCount(String catname,int catId, int sellerId)
 {
 	return categoryDao.getSKuCount(catname,catId , sellerId);
 }
+
+@Override
+public Category getCategory(String catname ,int sellerId)
+{
+	return categoryDao.getCategory(catname ,sellerId);
+}
 }

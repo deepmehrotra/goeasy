@@ -19,9 +19,11 @@ import com.goeasy.helper.DateSerializer;
 import com.goeasy.helper.HelperClass;
 import com.goeasy.model.ManualCharges;
 import com.goeasy.model.Partner;
+import com.goeasy.model.PaymentUpload;
 import com.goeasy.model.TaxDetail;
 import com.goeasy.service.ManualChargesService;
 import com.goeasy.service.PartnerService;
+import com.goeasy.service.PaymentUploadService;
 import com.goeasy.service.TaxDetailService;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -45,6 +47,11 @@ public class ManualChargesController {
  
  @Autowired
  private PartnerService partnerService;
+ 
+ @Autowired
+ private PaymentUploadService paymentUploadService;
+ 
+ 
  
 
  
@@ -299,6 +306,48 @@ public class ManualChargesController {
  	 	jo.put("Value", partner.getPcName());
  	 	ja.add(jo);
  		
+ 	}
+   model.put("Options",ja);
+   model.put("Result", "OK");
+   String jsonArray = gson.toJson(model);
+   System.out.println(jsonArray);
+	   return jsonArray;
+  }
+  
+  
+  @RequestMapping(value="/seller/getPaymentIdForMC", method = RequestMethod.POST)
+  public @ResponseBody String getPaymentIdForMC(HttpServletRequest request) {
+	  int sellerId=HelperClass.getSellerIdfromSession(request);
+	  System.out.println("Inside geting PaymentId for Manual Charges");
+   Map<String, Object> model = new HashMap<String, Object>();
+  // Gson gson = new GsonBuilder().setPrettyPrinting().create();
+   
+	GsonBuilder gsonBuilder = new GsonBuilder();
+ 	gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+ 	gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
+ 	Gson gson = gsonBuilder.setPrettyPrinting().create();
+ 	
+ 	
+ 	JSONArray ja = new JSONArray();
+ 	
+ 	JSONObject otherjo = new JSONObject();
+ 	otherjo.put("DisplayText", "Others");
+ 	otherjo.put("Value", "Others");
+	 	ja.add(otherjo);
+ 	
+ 	Map<String , String> partnerMap=new HashMap<>();
+ 	List<PaymentUpload> paymentUploadList=paymentUploadService.listPaymentUploads(sellerId);
+ 	if(paymentUploadList!=null)
+ 	{
+ 	for(PaymentUpload upload:paymentUploadList)
+ 	{
+ 		System.out.println(" Pauyment upload id  name : "+upload.getUploadDesc());
+ 		JSONObject jo = new JSONObject();
+ 		jo.put("DisplayText", upload.getUploadDesc());
+ 	 	jo.put("Value",upload.getUploadDesc());
+ 	 	ja.add(jo);
+ 		
+ 	}
  	}
    model.put("Options",ja);
    model.put("Result", "OK");

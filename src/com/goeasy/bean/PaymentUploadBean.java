@@ -12,6 +12,7 @@ public class PaymentUploadBean {
 	private Date uploadDate;
 	private double totalpositivevalue;
 	private double totalnegativevalue;
+	private double manualCharges;
 	private double netRecievedAmount;
 	private String uploadStatus;
 	private List<OrderBean> orders =new ArrayList<OrderBean>();
@@ -63,6 +64,12 @@ public class PaymentUploadBean {
 	}
 	public void setTotalnegativevalue(double totalnegativevalue) {
 		this.totalnegativevalue = totalnegativevalue;
+	}
+	public double getManualCharges() {
+		return manualCharges;
+	}
+	public void setManualCharges(double manualCharges) {
+		this.manualCharges = manualCharges;
 	}
 	
 

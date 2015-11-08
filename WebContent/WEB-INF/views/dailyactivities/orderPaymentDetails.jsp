@@ -16,12 +16,12 @@
 <script type="text/javascript">
 $(document).ready(function () {
 		$('#OrderPaymentContainer').jtable({
-			title : 'Payment List',
+			title : 'Payment Summary',
 			paging: true,
             sorting: true,
 			actions : {
 				listAction : 'paymentDetails.html?action=list&uploadId=${uploadId}',
-				updateAction : 'paymentDetails.html?action=update',
+				//updateAction : 'paymentDetails.html?action=update',
 			},
 			fields : {
 				orderId : {
@@ -35,15 +35,15 @@ $(document).ready(function () {
 				},
 				channelOrderID : {
 					title : 'Channel Order Id',
-					width : '10%',
+					width : '15%',
 					key : true,
 					list : true,
 					edit : true,
 					create : true
 				},
-				awbNum : {
-					title : 'AWB No',
-					width : '20%',
+				pcName : {
+					title : 'Partner',
+					width : '10%',
 					edit : false,
 					list : true,
 					create : false
@@ -57,21 +57,11 @@ $(document).ready(function () {
 				},
 				
 				status : {
-					title : 'status',
+					title : 'Status',
 					width : '10%',
 					edit : false,
 					list : true,
 					create : true
-				},
-				paymentdesc : {
-					title : 'Payment Description',
-					width : '10%',
-					edit : false,
-					list : true,
-					create : false,
-					display:function(data){
-	                     return data.record.orderPayment.paymentdesc;
-	           }
 				},
 				dateofPayment : {
 					title : 'Payment Date',
@@ -83,34 +73,14 @@ $(document).ready(function () {
 	                     return data.record.orderPayment.dateofPayment;
 	           }
 				},
-				negativeCharges : {
-					title : 'Negative Charges',
-					width : '10%',
+				netPaymentResult : {
+					title : 'Net Payment Recieved',
+					width : '15%',
 					edit : true,
 					list : true,
 					create : true,
 					display:function(data){
-	                     return data.record.orderPayment.negativeCharges;
-	           }
-				},
-				recievedamout : {
-					title : 'Actual Recieved',
-					width : '20%',
-					edit : true,
-					list : true,
-					create : true,
-					display:function(data){
-	                     return data.record.orderPayment.recievedamout;
-	           }
-				},
-				actualrecived2 : {
-					title : 'Actual Recieved 2',
-					width : '10%',
-					edit : true,
-					list : true,
-					create : true,
-					display:function(data){
-	                     return data.record.orderPayment.actualrecived2;
+	                     return data.record.orderPayment.netPaymentResult;
 	           }
 				}
 				

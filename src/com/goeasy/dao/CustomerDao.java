@@ -1,5 +1,7 @@
 package com.goeasy.dao;
 
+import org.hibernate.Session;
+
 import com.goeasy.model.Customer;
 
 /**
@@ -14,7 +16,8 @@ public interface CustomerDao {
 	 
 	 
 	 public Customer getCustomer(int customerId);
-	public Customer getCustomer(String customerEmail, int sellerId);
+	public Customer getCustomer(String customerEmail, int sellerId,Session session);
+	//public Customer getCustomer(String customerEmail, int sellerId,Session session);
 	 
 	// public void deleteCustomer(Customer customer,int sellerId);
 }

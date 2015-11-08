@@ -40,16 +40,9 @@ $(document).ready(function () {
 					create :true,
 					edit:true
 				},
-				chargesDesc : {
-					title : 'Description',
-					width : '10%',
-					key : true,
-					list : true,
-					edit : true,
-					create : true
-				},
+			
 				partner : {
-					title : 'Partner',
+					title : 'Partner(Optional)',
 					width : '10%',
 					list : true,
 					edit : true,
@@ -87,6 +80,15 @@ $(document).ready(function () {
                        // displayFormat: 'mm/dd/yy',
     					create : false
                         },
+               	chargesDesc : {
+   					title : 'Payment Id',
+   					width : '10%',
+   					key : true,
+   					list : true,
+   					edit : true,
+   					create : true,
+   					options:'getPaymentIdForMC.html'
+   				},
                 paymentCycle : {
 					title : 'Payment Cycle',
 					width : '10%',

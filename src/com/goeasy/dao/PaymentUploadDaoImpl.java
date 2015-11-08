@@ -1,5 +1,6 @@
 package com.goeasy.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -41,6 +42,7 @@ public class PaymentUploadDaoImpl implements PaymentUploadDao{
 			   seller=(Seller)criteria.list().get(0);
 			   if(upload.getUploadId()==0)
 			   {
+				   upload.setUploadDate(new Date());
 			 seller.getPaymentUploads().add(upload);
 			   System.out.println(" Inside upload add");
 	   

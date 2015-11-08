@@ -99,9 +99,8 @@
                                      class="form-control"/></div></div>
                                     </div>
 									<div class="mar-btm-20-oh"><label class="col-sm-4 control-label">SKU</label>
-
-                                    <div class="col-sm-8"><form:input path="productSkuCode" value="${order.productSkuCode}"
-                                     class="form-control"/></div>
+									  <div class="col-sm-8"><form:select path="productSkuCode" items="${productmap}"
+                                     class="form-control"></form:select></div>
                                     </div>
 									<div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Partner</label>
 
@@ -114,8 +113,6 @@
                                      class="form-control"/></div>
                                     </div>
 									<div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Shipping Charges</label>
-									
-
 									<c:choose>
 									 <c:when test="${order.shippingCharges gt 0}">
 									    <div class="col-sm-8">
@@ -153,6 +150,12 @@
                                    <div class="col-sm-8"><form:input path="logisticPartner" value="${order.logisticPartner}"
                                      class="form-control"/></div>
                                     </div>
+                                    
+                                    <div class="mar-btm-20-oh"><label class="col-sm-4 control-label">Tax Category</label>
+
+                                   <div class="col-sm-8"><form:select path="orderTax.taxCategtory" items="${taxcatmap}"
+                                     class="form-control"></form:select></div>
+                                    </div>
                                 </div>
                             </div>
                             <div id="tab-2" class="tab-pane col-sm-12">
@@ -180,7 +183,7 @@
                                     </div>
                                     
                             </div>
-                            <div id="tab-3" class="tab-pane col-sm-12">
+                           <!--  <div id="tab-3" class="tab-pane col-sm-12">
                                 <div class="col-sm-6">
                                     <div class="mar-btm-20-oh"><label class="col-sm-5 control-label">partner</label>
                                     <div class="col-sm-7"><input type="text" class="form-control"></div>
@@ -209,8 +212,8 @@
                                     <div class="col-sm-8"><input type="text" class="form-control"></div>
                                     </div>
                                 </div>
-                            </div>
-                            <div id="tab-4" class="tab-pane col-sm-12">
+                            </div> -->
+                            <!-- <div id="tab-4" class="tab-pane col-sm-12">
                                 <div class="col-sm-6">
                                     <div class="mar-btm-20-oh"><label class="col-sm-5 control-label">Customer Name</label>
                                     <div class="col-sm-7"><input type="text" class="form-control"></div>
@@ -239,7 +242,7 @@
                                     <div class="col-sm-8"><input type="text" class="form-control"></div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
                             </div>
                                 <div class="col-sm-12">
                                 <div class="hr-line-dashed"></div>

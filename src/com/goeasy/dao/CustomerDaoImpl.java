@@ -103,31 +103,42 @@ public Customer getCustomer(int customerId) {
 	return (Customer) sessionFactory.getCurrentSession().get(Category.class, customerId);
 }
 
+@SuppressWarnings("unchecked")
 @Override
-public Customer getCustomer(String customerEmail,int sellerId) {
+public Customer getCustomer(String customerEmail,int sellerId,Session session) {
 	Customer returncustomer=null;
+	//Session session=null;
+	System.out.println(" Beore opening connection in customer");
 	try
 	{
-	Session session=sessionFactory.openSession();
-	   session.beginTransaction();
-	   //Seller seller=(Seller)session.get(Seller.class, sellerId);
-	  /* System.out.println(" order from seller"+seller);
-	   System.out.println(" order from seller size"+seller.getOrders().size());*/
-	   Criteria criteria=session.createCriteria(Customer.class).add(Restrictions.eq("sellerId", sellerId))
+	//session=sessionFactory.getCurrentSession();
+	  if(! session.getTransaction().isActive())
+		  session.beginTransaction();
+	   System.out.println(" New connection openede in customer");
+	 Criteria criteria=session.createCriteria(Customer.class).add(Restrictions.eq("sellerId", sellerId))
 			   .add(Restrictions.eq("customerEmail", customerEmail));
 	  
-	@SuppressWarnings("unchecked")
+	
+	 if(criteria.list()!=null&&criteria.list().size()!=0)
+	   {
 	List<Customer> customerlist=(List<Customer>)criteria.list(); 
 	System.out.println(" Getting customer list :"+customerlist.size());
 	if(customerlist!=null&&customerlist.size()!=0)
 		returncustomer=customerlist.get(0);
 
-	   session.getTransaction().commit();
-	   session.close();
+	  
+	   }
 	}
 	catch(Exception e)
 	{
 		System.out.println(" Exception in getting cutomer list :"+e.getLocalizedMessage());
+		e.printStackTrace();
+	}
+	finally
+	{
+		//if(!session.getTransaction().wasCommitted())
+		/* session.getTransaction().commit();
+		   session.close();*/
 	}
 	return returncustomer;
 }

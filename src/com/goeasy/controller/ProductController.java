@@ -179,13 +179,15 @@ public class ProductController {
 	  }
    else
    {
+	   System.out.println(" Getting inventory update subtract value : : "+request.getParameter("quantityToSubstract"));
 	   int productId=request.getParameter("productId")!=null?Integer.parseInt(request.getParameter("productId")):0;
 	   String productSkuCode=request.getParameter("productSkuCode")!=null?request.getParameter("productSkuCode"):"";
 	   int currentInventory=request.getParameter("currentInventory")!=null?Integer.parseInt(request.getParameter("currentInventory")):0;
-	   int quantityToAdd=request.getParameter("quantityToAdd")!=null?Integer.parseInt(request.getParameter("quantityToAdd")):0;
+	   int quantityToAdd=(request.getParameter("quantityToAdd")!=null&&request.getParameter("quantityToAdd").toString().length()!=0)?Integer.parseInt(request.getParameter("quantityToAdd")):0;
 	   int quantityToSubstract=(request.getParameter("quantityToSubstract")!=null&&request.getParameter("quantityToSubstract").toString().length()!=0)?Integer.parseInt(request.getParameter("quantityToSubstract")):0;
 	   
-	   productService.updateInventory(productSkuCode, currentInventory, quantityToAdd, quantityToSubstract,sellerId); 
+	 
+	   productService.updateInventory(productSkuCode, currentInventory, quantityToAdd, quantityToSubstract,true,sellerId); 
 	   model.put("Record",ConverterClass.prepareProductBean(productService.getProduct(productId)));
    }
    model.put("Result", "OK");

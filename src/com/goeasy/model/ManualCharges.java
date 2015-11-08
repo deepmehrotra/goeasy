@@ -18,6 +18,7 @@ public class ManualCharges {
 	private int mcId;
 	@Column
 	private String chargesCategory;
+	//Saving Payment Id as Description to be updated later 
 	@Column
 	private String chargesDesc;
 	@Column

@@ -26,6 +26,14 @@
             }
         });
     }
+    function onclickDeleteExpenseGroup(id) {
+  	  $.ajax({
+          url : 'deleteExpenseCategory.html?expcategoryId='+id,
+          success : function(data) {
+              $('#centerpane').html(data);
+          }
+      });
+  }
  
 </script>
  </head>
@@ -45,6 +53,7 @@
                             </div>
                         </div>
                         <div class="ibox-content">
+                        ${error}
                             <table class="table table-bordered custom-table">
                                 <thead>
                                 <tr>
@@ -53,6 +62,7 @@
                                     <th>Description</th>
                                     <th>Created On</th>
                                     <th>Expense Count</th>
+                                    <th>Current Month Expense</th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
@@ -61,12 +71,13 @@
                                 <c:forEach items="${expenseCategories}" var="category" varStatus="loop">
                                 <tr>
                                     <td>${loop.index+1}</td>
-                                    <td>${category.expcatName}</a></td>
+                                    <td>${category.expcatName}</td>
                                     <td>${category.expcatDescription}</td>
                                     <td>${category.createdOn}</td>
                                     <td>${category.expenses.size()}</td>
+                                     <td>${category.monthlyAmount}</td>
                                     <td class="tooltip-demo">
-                                    <a href=""><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Edit"></i></a></td>
+                                    <a href="deleteExpenseCategory.html?expcategoryId=${category.expcategoryId}"><i class="fa fa-edit text-navy" data-toggle="tooltip" data-placement="top" data-original-title="Delete Empty Category"></i></a></td>
                                 </tr>
                                 </c:forEach>
                                 </c:if>

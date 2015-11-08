@@ -56,13 +56,13 @@
                                      class="form-control"/>
                                      </div>
                                     </div>
-                                    <div class="mar-btm-20-oh"><label class="col-sm-5 control-label">Date of Expense</label>
+                                    <!-- <div class="mar-btm-20-oh"><label class="col-sm-5 control-label">Date of Expense</label>
                                     <div class="col-md-7" id="data_1">
                                             <div class="input-group date">
                                             <span class="input-group-addon"><i class="fa fa-calendar"></i></span><input type="text" class="form-control">
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                     <div class="mar-btm-20-oh"><label class="col-sm-5 control-label">Notes</label>
                                     <div class="col-sm-7"><form:input path="expenseDescription" value="${expense.expenseDescription}"
                                      class="form-control"/></div>

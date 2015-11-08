@@ -1,12 +1,17 @@
 package com.goeasy.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -34,18 +39,20 @@ public class ExpenseDaoImpl implements ExpenseDao {
 	// sellerId=4;
 	 Seller seller=null;
 	 ExpenseCategory parentcategory=null;
+	 Session session=null;
 
 	 System.out.println(" *** Inside add expese add");
 	 try
 	 {
+		 session=sessionFactory.openSession();
+		 session.beginTransaction();
 		/* if(expense.getExpenseId()!=0)
 		 {
-			 saveExpense(expense);
+			session.saveOrUpdate(expense);
 		 }
 		 else
 		 {*/
-			 Session session=sessionFactory.openSession();
-			 session.beginTransaction();
+		 	
 			 Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
 			 seller=(Seller)criteria.list().get(0);
 			 expense.setCreatedOn(new Date());
@@ -72,13 +79,18 @@ public class ExpenseDaoImpl implements ExpenseDao {
 			 System.out.println(" Added parent category to seller");
 			 session.saveOrUpdate(parentcategory);
 			// session.saveOrUpdate(expense);
-			 session.getTransaction().commit();
-			 session.close();
-		// }
+			
+		 //}
 	 }
 	 catch (Exception e) {
 		 System.out.println("Inside exception  "+e.getLocalizedMessage());
 		 e.printStackTrace();
+		 session.getTransaction().rollback();
+	 }
+	 finally
+	 {
+		 session.getTransaction().commit();
+		 session.close();
 	 }
 
 
@@ -86,32 +98,98 @@ public class ExpenseDaoImpl implements ExpenseDao {
 	 
  }
  
+ @Override
+ public double getMonthlyAmount(int catId ,int sellerId) {
+		List<Long> returnlist=null;
+		Session session=null;
+		Date tommorrowDate=new Date();
+		tommorrowDate.setDate(tommorrowDate.getDate()+1);
+		Date monthStartDate=new Date();
+		monthStartDate.setDate(1);
+		Double returnAmount=0.0;
+		try
+		{
+			session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   returnlist=new ArrayList<Long>();
+			 /*
+			  * Code for caluclating sku count
+			  */
+			 Criteria criteriaforSkuCount=session.createCriteria(Expenses.class);
+			 criteriaforSkuCount.createAlias("expenseCategory", "expCat", CriteriaSpecification.LEFT_JOIN)
+			 .add(Restrictions.eq("expCat.expcategoryId", catId))
+			 .add(Restrictions.between("createdOn", monthStartDate,tommorrowDate));
+			 criteriaforSkuCount.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			 ProjectionList projList = Projections.projectionList();
+			 projList.add(Projections.sum("amount"));
+			criteriaforSkuCount.setProjection(projList);
+			List<Object[]> expenseAmount = criteriaforSkuCount.list();
+			 Iterator catIterator = expenseAmount.iterator();
+			 if(expenseAmount != null){
+				 while(catIterator.hasNext()){
+					 //Object[] recordsRow = (Object[])catIterator.next();
+					 Double recordsRow = (Double)catIterator.next();
+					// System.out.println(" Length of record row : "+recordsRow.length);
+					 /*if(recordsRow!=null&&recordsRow.length!=0&&recordsRow[0]!=null)
+					 {
+						 returnAmount=Double.parseDouble(recordsRow[0].toString());
+					
+					 }*/
+					 returnAmount=recordsRow;
+					 System.out.println("recordsRow:  "+recordsRow);
+				 }
+			 }
+			 
+		
+		}
+		catch(Exception e)
+		{
+			System.out.println(" Exception in getting category count :"+e.getLocalizedMessage());
+			e.printStackTrace();
+		}
+		finally
+		{
+			session.getTransaction().commit();
+			   session.close();
+		}
+		if(returnAmount!=null)
+		return returnAmount;
+		else
+		return 0.0;
+	}
+
+ 
  public void addExpenseCategory(ExpenseCategory category , int sellerId)
  {
 	 //sellerId=4;
-		Seller seller=null;
-		   try
+	 Seller seller=null;
+	  try
+	   {
+		   Session session=sessionFactory.openSession();
+		   session.beginTransaction();
+		   if(category.getExpcategoryId()==0)
 		   {
-			   Session session=sessionFactory.openSession();
-			   session.beginTransaction();
-			   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
-			   seller=(Seller)criteria.list().get(0);
-			   System.out.println("checkign if exp cat is null");
-			   if(seller.getExpensecategories()!=null)
-			   {
-				   System.out.println("Adding expense cat");
-				   seller.getExpensecategories().add(category);
-			   }
-			   System.out.println("saving seller cat");
-		   session.saveOrUpdate(seller);
+		   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
+		   seller=(Seller)criteria.list().get(0);
+		   category.setCreatedOn(new Date());
 		  
-		   session.getTransaction().commit();
-		   session.close();
+		   System.out.println(" Inside expense category  add");
+		   if(seller.getExpensecategories()!=null)
+			   seller.getExpensecategories().add(category);
+	   session.saveOrUpdate(seller);
 		   }
-		   catch (Exception e) {
-			   System.out.println("Inside exception  "+e.getLocalizedMessage());
-			   e.printStackTrace();
-		}
+		   else
+		   {
+			   category.setCreatedOn(new Date());
+			   session.saveOrUpdate(category);
+		   }
+	    session.getTransaction().commit();
+	   session.close();
+	   }
+	   catch (Exception e) {
+		   System.out.println("Inside exception  "+e.getLocalizedMessage());
+	}
+	  System.out.println(" Saved Expense Group : "+category.getExpcategoryId());
  }
 
  @SuppressWarnings("unchecked")
@@ -173,69 +251,91 @@ public List<Expenses> listExpenses(int sellerId)
  }
  
  
- public void deleteExpense(Expenses expense,int sellerId)
+ public int deleteExpense(Expenses expense,int sellerId)
  {
-	 System.out.println(" In Category delete cid "+expense.getExpenseName());
+	 System.out.println(" In Expense delete cid "+expense.getExpenseId());
 	 //sellerId=4;
+	 Session session=null;
+	 int catdelete=0;
 	 try
 	 {
-		 Session session=sessionFactory.openSession();
+		 session=sessionFactory.openSession();
 		  session.beginTransaction();
-		  Query deleteQuery = session.createSQLQuery(
+		/*  Query deleteQuery = session.createSQLQuery(
 				    "delete from ExpenseCategory_Expenses where expcategoryId=? and expenses_expenseId=?");
 		  		deleteQuery.setInteger(0,expense.getExpenseCategory().getExpcategoryId());
 				deleteQuery.setInteger(1, expense.getExpenseId());
 				
-				int updated = deleteQuery.executeUpdate();
-				int catdelete=session.createQuery("DELETE FROM Expenses WHERE expenseId = "+expense.getExpenseId()).executeUpdate();
+				int updated = deleteQuery.executeUpdate();*/
+				catdelete=session.createQuery("DELETE FROM Expenses WHERE expenseId = "+expense.getExpenseId()).executeUpdate();
 		
-				System.out.println("  Deleteing category updated:"+updated+" catdelete :"+catdelete);
-		  session.getTransaction().commit();
-		  session.close();
+				System.out.println("  Deleteing category catdelete :"+catdelete);
+		  
 
 	 }
 	 catch(Exception e)
 	 {
 		 System.out.println(" Inside delleting order"+e.getLocalizedMessage());
 		 e.printStackTrace();
+		 session.getTransaction().rollback();
+		 return 0;
 	 }
+	 finally
+	 {
+		 session.getTransaction().commit();
+		  session.close();
+	 }
+	 return catdelete;
  }
  
- public void deleteExpenseCategory(ExpenseCategory expenseCat,int sellerId)
+ public int deleteExpenseCategory(ExpenseCategory expenseCat,int sellerId)
  {
-	 System.out.println(" In Category delete cid "+expenseCat.getExpcatName());
+	 System.out.println(" In Category delete cid "+expenseCat.getExpcategoryId());
 	// sellerId=4;
+	 int updated=0;
+	 int catdelete=0;
+	 Session session=null;
+	 
+	 
 	 try
 	 {
-		 if(expenseCat.getExpenses()!=null)
-		 {
-		 for(Expenses exp:expenseCat.getExpenses())
-		 {
-			 deleteExpense(exp , sellerId);
-		 }
-		 }
-		 
-		 Session session=sessionFactory.openSession();
+		
+		session=sessionFactory.openSession();
 		  session.beginTransaction();
-		  
+		  expenseCat=(ExpenseCategory)session.get(ExpenseCategory.class, expenseCat.getExpcategoryId());
+		  if(expenseCat.getExpenses()!=null&&expenseCat.getExpenses().size()!=0)
+			 {
+			return 0;
+			 }
+			 
 		  Query deleteQuery = session.createSQLQuery(
-				    "delete from Seller_ExpenseCategory where seller_Id=? and ExpenseCategory_expcategoryId=?");
-		  		deleteQuery.setInteger(0,sellerId);
-				deleteQuery.setInteger(1, expenseCat.getExpcategoryId());
+				    "delete from Seller_ExpCat where Id="+sellerId+"and EXPCATID="+expenseCat.getExpcategoryId());
+		  		/*deleteQuery.setInteger(0,sellerId);
+				deleteQuery.setInteger(1, expenseCat.getExpcategoryId());*/
 				
-				int updated = deleteQuery.executeUpdate();
-				int catdelete=session.createQuery("DELETE FROM ExpenseCategory WHERE expcategoryId = "+expenseCat.getExpcategoryId()).executeUpdate();
+				updated = deleteQuery.executeUpdate();
+				catdelete=session.createQuery("DELETE FROM ExpenseCategory WHERE expcategoryId = "+expenseCat.getExpcategoryId()).executeUpdate();
 		
 				System.out.println("  Deleteing exp category updated:"+updated+" catdelete :"+catdelete);
-		  session.getTransaction().commit();
-		  session.close();
+		 
 
 	 }
 	 catch(Exception e)
 	 {
 		 System.out.println(" Inside delleting expcat"+e.getLocalizedMessage());
 		 e.printStackTrace();
+		 return 0;
 	 }
+	 finally
+	 {
+		 session.getTransaction().commit();
+		  session.close();
+	 }
+	 if(updated!=0&&catdelete!=0)
+	 {
+		 return updated;
+	 }
+	 return 0;
  }
  
 

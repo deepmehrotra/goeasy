@@ -46,5 +46,10 @@ public void deleteManualCharges(ManualCharges manualCharges,int sellerId) {
 	manualChargesDao.deleteManualCharges(manualCharges, sellerId);
 }
 
+@Override
+public Double getMCforPaymentID(String paymentId, int sellerId)
+{
+	return manualChargesDao.getMCforPaymentID(paymentId, sellerId);
+}
 
 }

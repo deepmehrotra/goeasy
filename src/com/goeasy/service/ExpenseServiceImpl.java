@@ -58,15 +58,20 @@ public ExpenseCategory getExpenseCategory(int expenseCatId) {
 }
 
 @Override
-public void deleteExpenseCategory(ExpenseCategory expenseCat,int sellerId) {
+public int deleteExpenseCategory(ExpenseCategory expenseCat,int sellerId) {
 	
-	expenseDao.deleteExpenseCategory(expenseCat,sellerId);
+	return expenseDao.deleteExpenseCategory(expenseCat,sellerId);
 }
 
 @Override
-public void deleteExpense(Expenses expenses,int sellerId) {
+public int deleteExpense(Expenses expenses,int sellerId) {
 	
-	expenseDao.deleteExpense(expenses,sellerId);
+	return expenseDao.deleteExpense(expenses,sellerId);
 }
 
+@Override
+public double getMonthlyAmount(int catId, int sellerId)
+{
+	return expenseDao.getMonthlyAmount(catId, sellerId);
+}
 }

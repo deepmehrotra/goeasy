@@ -1,5 +1,6 @@
 package com.goeasy.controller;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -46,6 +47,9 @@ private PartnerService partnerService;
 
 @Autowired
 private OrderService orderService;
+
+private static final SimpleDateFormat dateFormat = new SimpleDateFormat("mm/dd/yy");
+
 
 @RequestMapping(value = "/seller/getAllReports", method = RequestMethod.GET)
 public String displayForm() {
@@ -111,7 +115,18 @@ public ModelAndView getReport(HttpServletRequest request) {
  if(partner!=null&&partner.equals("allPartners"))
  {
 	 ttso= reportGeneratorService.getAllPartnerTSOdetails(startDate, endDate,  HelperClass.getSellerIdfromSession(request));
+	 if(ttso!=null)
+	 System.out.println(" ****Inside controller after gettitng ttso objkect : "+ttso.size());
+	 else
+		 System.out.println(" TTSO object is geting null");
+	 
 	 model.put("ttsolist",ttso);
+	 if(ttso.size()>0)
+	 {System.out.println(" Citi quantity size : "+ttso.get(0).getCityQuantity());
+	 System.out.println(" Citi percent size : "+ttso.get(0).getCityPercentage());
+		 model.put("citicount", ttso.get(0).getCityQuantity());
+		 model.put("citipercent", ttso.get(0).getCityPercentage());
+	 }
 	 Collections.sort(ttso, new TotalShippedOrder.OrderByNR());
 	 model.put("NRsortedttso", getSortedList(ttso));
 	 Collections.sort(ttso, new TotalShippedOrder.OrderByReturnamount());
@@ -127,7 +142,7 @@ public ModelAndView getReport(HttpServletRequest request) {
  {
 	 reportGeneratorService.getPartnerTSOdetails(selectedPartner, startDate, endDate, HelperClass.getSellerIdfromSession(request));
  }
-
+model.put("period", dateFormat.format(startDate)+" to "+dateFormat.format(endDate));
 /* 
  model.put("reportName",reportName);
  model.put("partnerlist",partnerlist);*/
@@ -218,7 +233,6 @@ public List<TotalShippedOrder> getSortedList(List<TotalShippedOrder> ttso)
 		i++;
 	}
 	
-	
 	fifthreco.setPcName("Others");
 	returnlist.add(fifthreco);
 	
@@ -231,7 +245,6 @@ public List<TotalShippedOrder> getSortedList(List<TotalShippedOrder> ttso)
 			returnlist.add(ttso.get(i));
 		}
 	}
-	
 	return returnlist;
 	
 	

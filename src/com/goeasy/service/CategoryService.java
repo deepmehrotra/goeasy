@@ -18,6 +18,9 @@ public interface CategoryService {
  
  public Category getCategory(int catId);
  
+ public Category getCategory(String catname ,int sellerId);
+ 
+ 
  public int deleteCategory(Category category,int sellerId);
 
 public List<Long> getSKuCount(String catname, int catId, int sellerId);

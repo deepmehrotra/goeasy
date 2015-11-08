@@ -29,6 +29,7 @@ import com.goeasy.model.OrderPayment;
 import com.goeasy.model.OrderRTOorReturn;
 import com.goeasy.model.OrderTimeline;
 import com.goeasy.model.Partner;
+import com.goeasy.model.Product;
 import com.goeasy.model.Seller;
 import com.goeasy.service.ProductService;
 import com.goeasy.service.TaxDetailService;
@@ -64,8 +65,9 @@ public class OrderDaoImpl implements OrderDao {
  	Date tempDate=null;
  	Session session=null;
  	
- 	
- 	
+ 	Product product = productService.getProduct(order.getProductSkuCode(), sellerId);
+ 	if(product!=null)
+ 	{
  	   try
  	   {
  	   session=sessionFactory.openSession();
@@ -118,7 +120,10 @@ public class OrderDaoImpl implements OrderDao {
  		   order.getOrderTax().setTdsToDeduct(order.getPartnerCommission()*(.1));
  	   }
  	   //Reducing Product Inventory For Order
- 	  productService.updateInventory(order.getProductSkuCode(), 0, 0, order.getQuantity(), sellerId);
+ 	 // productService.updateInventory(order.getProductSkuCode(), 0, 0, order.getQuantity(),false, sellerId);
+ 	  product=productService.getProduct(order.getProductSkuCode(), sellerId);
+ 	  product.setQuantity(product.getQuantity()- order.getQuantity());
+ 	  session.saveOrUpdate(product);
  	   
  	   /* checking if customer is available*/
  	   System.out.println(" Inside add order before checking customer");
@@ -128,7 +133,7 @@ public class OrderDaoImpl implements OrderDao {
  	   order.getCustomer().setSellerId(sellerId);
  	   System.out.println(" After setting seller id in customer");
  	   CustomerDao customerdao=new CustomerDaoImpl();
- 	   customer=customerdao.getCustomer(order.getCustomer().getCustomerEmail(), sellerId);
+ 	   customer=customerdao.getCustomer(order.getCustomer().getCustomerEmail(), sellerId,session);
  	  if(customer!=null)
 	   {
 		   order.setCustomer(customer);
@@ -172,22 +177,26 @@ public class OrderDaoImpl implements OrderDao {
  	   session.saveOrUpdate(partner);
  	   session.saveOrUpdate(seller);
  	   }
+ 	 session.getTransaction().commit();
  	   /*session.getTransaction().commit();
  	   session.close();*/
  	   }
  	   catch (Exception e) {
+ 		   if(session.getTransaction()!=null&&session.getTransaction().isActive())
+ 		  // session.getTransaction().rollback();
  		   System.out.println("Inside exception in add order "+e.getLocalizedMessage()+" message: "+e.getMessage());
  		   e.printStackTrace();
  		
  	}
+ 	
  	  
  		  finally
  			{
- 				session.getTransaction().commit();
+ 				
  				   session.close();
  			}
  	   
- 	
+ 	}
  	
  }
 
@@ -384,13 +393,25 @@ public void addReturnOrder(String channelOrderId ,OrderRTOorReturn orderReturn,i
 				{
 				   order.getOrderReturnOrRTO().setReturnOrRTOChargestoBeDeducted(0);
 				   order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-order.getNetRate());
-                   
+				   order.setStatus("Return Limit Crossed");
+				   OrderTimeline timeline=new OrderTimeline();
+				   timeline.setEvent("Return Recieved");
+				   timeline.setEventDate(new Date());
+				   order.getOrderTimeline().add(timeline);
+				   OrderTimeline timeline1=new OrderTimeline();
+				   timeline1.setEvent("Return Limit Crossed");
+				   timeline1.setEventDate(new Date());
+				   order.getOrderTimeline().add(timeline1);
 				}
 			   else
 			   {
 				   order.getOrderReturnOrRTO().setReturnOrRTOChargestoBeDeducted(orderReturn.getReturnOrRTOChargestoBeDeducted());
 				   order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getPaymentDifference()+order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted());
-                   
+				   order.setStatus("Return Recieved");
+				   OrderTimeline timeline=new OrderTimeline();
+				   timeline.setEvent("Return Recieved");
+				   timeline.setEventDate(new Date());
+				   order.getOrderTimeline().add(timeline);
 				   
 			   }
 			   if( (int)order.getOrderPayment().getNegativeAmount()!=0)
@@ -402,16 +423,17 @@ public void addReturnOrder(String channelOrderId ,OrderRTOorReturn orderReturn,i
 			   {
 				   order.getOrderPayment().setPaymentDifference(-(order.getOrderPayment().getNetPaymentResult()+order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted()));
 			   }
-			   order.setStatus("Return Recieved");
+			  // order.setStatus("Return Recieved");
 			   order.setFinalStatus("Actionable");
 			   order.setNetSaleQuantity(order.getQuantity()-order.getOrderReturnOrRTO().getReturnorrtoQty());
 			   orderReturn.setReturnUploadDate(new Date());
-			   productService.updateInventory(order.getProductSkuCode(), 0, order.getOrderReturnOrRTO().getReturnorrtoQty(), 0, sellerId);
+			   productService.updateInventory(order.getProductSkuCode(), 0, order.getOrderReturnOrRTO().getReturnorrtoQty(), 0,false, sellerId);
 			   
 			   order.getOrderReturnOrRTO().setReturnDate(orderReturn.getReturnDate());
 			   order.getOrderReturnOrRTO().setReturnOrRTOId(orderReturn.getReturnOrRTOId());
 			   order.getOrderReturnOrRTO().setReturnorrtoQty(orderReturn.getReturnorrtoQty());
 			   order.getOrderReturnOrRTO().setReturnOrRTOreason(orderReturn.getReturnOrRTOreason());
+			   order.getOrderReturnOrRTO().setReturnOrRTOstatus("Return");
 			  
 			   order.setOrderReturnOrRTO(orderReturn);
 			
@@ -619,15 +641,30 @@ public Order addOrderPayment(int orderid, OrderPayment orderPayment,int sellerId
 						
 					}
 					
+					order.setStatus("Payment Recieved");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getPositiveAmount()+" Recieved");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
 					
 				}
 				else
 				{
+					 order.setStatus("Payment Deducted");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getNegativeAmount()+" Deducted");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
 					order.getOrderPayment().setNegativeAmount(orderPayment.getNegativeAmount());
 					order.getOrderPayment().setNetPaymentResult(order.getOrderPayment().getNetPaymentResult()-orderPayment.getNegativeAmount());
 					 if(order.getReturnLimitCrossed().compareTo(order.getOrderReturnOrRTO().getReturnDate())<0)
 						{
 						  order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-order.getTotalAmountRecieved());
+						  order.setStatus("Return Limit Crossed");
+							 OrderTimeline timeline1=new OrderTimeline();
+							   timeline1.setEvent("Return Limit Crossed");
+							   timeline1.setEventDate(new Date());
+							   order.getOrderTimeline().add(timeline1);
 						}
 					  else
 					  {
@@ -638,6 +675,7 @@ public Order addOrderPayment(int orderid, OrderPayment orderPayment,int sellerId
 			}
 			else
 			{
+				
 				if(((int)orderPayment.getPositiveAmount())!=0)
 				{
 					
@@ -646,14 +684,29 @@ public Order addOrderPayment(int orderid, OrderPayment orderPayment,int sellerId
 					order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-(order.getTotalAmountRecieved()-order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted()));
 					System.out.println("payment difference :"+order.getOrderPayment().getPaymentDifference());
 					
+					order.setStatus("Payment Recieved");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getPositiveAmount()+" Recieved");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
+					
 					
 				}
 				else
 				{
+					order.setStatus("Return Not Recieved");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getNegativeAmount()+" Deducted");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
 					if(order.getReturnLimitCrossed().compareTo(new Date())<0)
 					{
 						order.setStatus("Return Limit Crossed");
 						order.getOrderReturnOrRTO().setReturnOrRTOChargestoBeDeducted(0);
+						 OrderTimeline timeline1=new OrderTimeline();
+						   timeline1.setEvent("Return Limit Crossed");
+						   timeline1.setEventDate(new Date());
+						   order.getOrderTimeline().add(timeline1);
 					}
 					order.getOrderPayment().setNegativeAmount(orderPayment.getNegativeAmount());
 					order.getOrderPayment().setNetPaymentResult(order.getOrderPayment().getNetPaymentResult()-orderPayment.getNegativeAmount());
@@ -667,12 +720,12 @@ public Order addOrderPayment(int orderid, OrderPayment orderPayment,int sellerId
 			order.getOrderPayment().setUploadDate(new Date());
 			if(order.getOrderPayment().getPaymentDifference()>0||(int)order.getOrderPayment().getPaymentDifference()==0)
 			{
-				order.setStatus("OK Payment");
+				//order.setStatus("OK Payment");
 				order.setFinalStatus("Settled");
 			}
 			else
 			{
-				order.setStatus("Payment Difference");
+				//order.setStatus("Payment Difference");
 				order.setFinalStatus("Actionable");
 			}
 			System.out.println("order in add payment :   **"+order);
@@ -719,7 +772,7 @@ public Order addOrderPayment(String skucode ,String channelOrderId , OrderPaymen
 		{
 			//order=seller.getOrders().get(0);
 			
-			if(order.getOrderReturnOrRTO().getReturnDate()!=null&&order.getOrderReturnOrRTO().getReturnorrtoQty()!=0)
+			/*if(order.getOrderReturnOrRTO().getReturnDate()!=null&&order.getOrderReturnOrRTO().getReturnorrtoQty()!=0)
 			{
 				if(((int)orderPayment.getPositiveAmount())!=0)
 				{
@@ -780,9 +833,125 @@ public Order addOrderPayment(String skucode ,String channelOrderId , OrderPaymen
 			//To Do - implement netactualrate 2
 			session.saveOrUpdate(order);
 			session.getTransaction().commit();
-			session.close();
+			session.close();*/
 			
 
+			if(order.getOrderReturnOrRTO().getReturnDate()!=null&&order.getOrderReturnOrRTO().getReturnorrtoQty()!=0)
+			{
+				if(((int)orderPayment.getPositiveAmount())!=0)
+				{
+					
+					order.getOrderPayment().setPositiveAmount(orderPayment.getPositiveAmount());
+					order.getOrderPayment().setNetPaymentResult(order.getOrderPayment().getNetPaymentResult()+orderPayment.getPositiveAmount());
+					if(order.getOrderPayment().getNetPaymentResult()>0)
+					{
+						  if(order.getReturnLimitCrossed().compareTo(order.getOrderReturnOrRTO().getReturnDate())<0)
+							{
+							  order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-order.getTotalAmountRecieved());
+							}
+						  else
+						  {
+							  order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-(order.getTotalAmountRecieved()-order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted()));
+						  }
+					}
+					else
+					{
+						order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()+order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted());
+						
+					}
+					
+					order.setStatus("Payment Recieved");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getPositiveAmount()+" Recieved");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
+					
+				}
+				else
+				{
+					 order.setStatus("Payment Deducted");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getNegativeAmount()+" Deducted");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
+					order.getOrderPayment().setNegativeAmount(orderPayment.getNegativeAmount());
+					order.getOrderPayment().setNetPaymentResult(order.getOrderPayment().getNetPaymentResult()-orderPayment.getNegativeAmount());
+					 if(order.getReturnLimitCrossed().compareTo(order.getOrderReturnOrRTO().getReturnDate())<0)
+						{
+						  order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-order.getTotalAmountRecieved());
+						  order.setStatus("Return Limit Crossed");
+							 OrderTimeline timeline1=new OrderTimeline();
+							   timeline1.setEvent("Return Limit Crossed");
+							   timeline1.setEventDate(new Date());
+							   order.getOrderTimeline().add(timeline1);
+						}
+					  else
+					  {
+					order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()+order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted());
+					  }
+					
+				}
+			}
+			else
+			{
+				
+				if(((int)orderPayment.getPositiveAmount())!=0)
+				{
+					
+					order.getOrderPayment().setPositiveAmount(orderPayment.getPositiveAmount());
+					order.getOrderPayment().setNetPaymentResult(order.getOrderPayment().getNetPaymentResult()+orderPayment.getPositiveAmount());
+					order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-(order.getTotalAmountRecieved()-order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted()));
+					System.out.println("payment difference :"+order.getOrderPayment().getPaymentDifference());
+					
+					order.setStatus("Payment Recieved");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getPositiveAmount()+" Recieved");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
+					
+					
+				}
+				else
+				{
+					order.setStatus("Return Not Recieved");
+					 OrderTimeline timeline=new OrderTimeline();
+					   timeline.setEvent("Rs "+orderPayment.getNegativeAmount()+" Deducted");
+					   timeline.setEventDate(new Date());
+					   order.getOrderTimeline().add(timeline);
+					if(order.getReturnLimitCrossed().compareTo(new Date())<0)
+					{
+						order.setStatus("Return Limit Crossed");
+						order.getOrderReturnOrRTO().setReturnOrRTOChargestoBeDeducted(0);
+						 OrderTimeline timeline1=new OrderTimeline();
+						   timeline1.setEvent("Return Limit Crossed");
+						   timeline1.setEventDate(new Date());
+						   order.getOrderTimeline().add(timeline1);
+					}
+					order.getOrderPayment().setNegativeAmount(orderPayment.getNegativeAmount());
+					order.getOrderPayment().setNetPaymentResult(order.getOrderPayment().getNetPaymentResult()-orderPayment.getNegativeAmount());
+					order.getOrderPayment().setPaymentDifference(order.getOrderPayment().getNetPaymentResult()-order.getNetRate()+order.getOrderReturnOrRTO().getReturnOrRTOChargestoBeDeducted());
+					
+					
+				}
+			}
+			order.getOrderPayment().setDateofPayment(orderPayment.getDateofPayment());
+			order.getOrderPayment().setPaymentCycle(orderPayment.getPaymentCycle());
+			order.getOrderPayment().setUploadDate(new Date());
+			if(order.getOrderPayment().getPaymentDifference()>0||(int)order.getOrderPayment().getPaymentDifference()==0)
+			{
+				//order.setStatus("OK Payment");
+				order.setFinalStatus("Settled");
+			}
+			else
+			{
+				//order.setStatus("Payment Difference");
+				order.setFinalStatus("Actionable");
+			}
+			System.out.println("order in add payment :   **"+order);
+			//To Do - implement netactualrate 2
+			session.saveOrUpdate(order);
+			session.getTransaction().commit();
+			session.close();
 		}
 	}
 	catch(Exception e)

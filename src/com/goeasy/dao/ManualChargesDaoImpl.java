@@ -7,6 +7,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -82,6 +83,40 @@ public class ManualChargesDaoImpl implements ManualChargesDao {
 		return returnlist;
  }
  
+ @Override
+ public Double getMCforPaymentID(String paymentId ,int sellerId)
+ {
+	 //sellerId=4;
+		Double returnValue=0.0;
+		Seller seller=null;
+		ManualCharges mc=null;
+		try
+		{
+			Session session=sessionFactory.openSession();
+			   session.beginTransaction();
+			   Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
+			   criteria.createAlias("manualCharges", "manualCharges", CriteriaSpecification.LEFT_JOIN)
+			   .add(Restrictions.eq("manualCharges.chargesDesc", paymentId))
+			   .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			   
+			   if(criteria.list()!=null&&criteria.list().size()!=0)
+			   {
+			   seller=(Seller)criteria.list().get(0);
+			   mc=seller.getManualCharges().get(0);
+			   }
+			   if(mc!=null)
+			   {
+				   returnValue=mc.getPaidAmount();
+			   }
+			   session.getTransaction().commit();
+			   session.close();
+		}
+		catch(Exception e)
+		{
+			System.out.println(" Exception in getting Manual Charges list :"+e.getLocalizedMessage());
+		}
+		return returnValue;
+ }
  
  public ManualCharges getManualCharges(int mcId)
  {

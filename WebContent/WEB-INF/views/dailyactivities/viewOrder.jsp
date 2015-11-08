@@ -74,7 +74,7 @@
                 <div class="col-lg-12 order-info-block">
                     <div class="float-e-margins col-lg-6">
                         <div class="ibox-title">
-                            <h5>Order Charges</h5>
+                            <h5>Transaction Summary</h5>
                         </div>
                         <div class="ibox-content add-company view-order">
                                 
@@ -92,7 +92,7 @@
                               <div>
                                   <span>Gross Net Rate</span>
                                   <span></span>
-                                  <span>${order.netRate}</span>
+                                  <span>${order.grossNetRate}</span>
                               </div>
                               <div>
                                   <span>Quantity</span>
@@ -115,7 +115,7 @@
                     </div>
                     <div class="float-e-margins col-lg-6">
                         <div class="ibox-title">
-                            <h5>Shipping Details</h5>
+                            <h5>Shipping Info</h5>
                         </div>
                         <div class="ibox-content add-company view-order">
                                 
@@ -160,7 +160,7 @@
 				
 				<div class="float-e-margins col-lg-4">
                         <div class="ibox-title">
-                            <h5>Payment Info</h5>
+                            <h5>Paymout Info</h5>
                         </div>
                         <div class="ibox-content add-company view-order">
                                 
@@ -204,7 +204,7 @@
                     </div>
                     <div class="float-e-margins col-lg-4">
                         <div class="ibox-title">
-                            <h5>Order Account</h5>
+                            <h5>Transaction breakup</h5>
                         </div>
                         <div class="ibox-content add-company view-order">
                                 
@@ -250,7 +250,7 @@
                     </div>
                     <div class="float-e-margins col-lg-4">
                         <div class="ibox-title">
-                            <h5>Return Details</h5>
+                            <h5>Return Info</h5>
                         </div>
                         <div class="ibox-content add-company view-order">
                                 
@@ -263,17 +263,17 @@
                               <div>
                                   <span>Return or RTO</span>
                                   <span></span>
-                                  <span>Return</span>
+                                  <span>${order.orderReturnOrRTO.returnOrRTOstatus}</span>
                               </div>
                               <div>
                                   <span>Return Limit</span>
                                   <span></span>
-                                  <span>${order.returnLimitCrossed}</span>
+                                  <span><fmt:formatDate value="${order.returnLimitCrossed}" pattern="MMM-dd-YYYY"/></span>
                               </div>
                               <div>
                                   <span>RTO Limit</span>
                                   <span></span>
-                                  <span>${order.returnLimitCrossed}</span>
+                                  <span><fmt:formatDate value="${order.rTOLimitCrossed}" pattern="MMM-dd-YYYY"/></span>
                               </div>
 							  <div>
                                   <span>Return Date</span>
@@ -306,7 +306,7 @@
 				<div class="col-lg-12 order-info-block">
 				<div class="float-e-margins col-lg-4">
                         <div class="ibox-title">
-                            <h5>Customer Details</h5>
+                            <h5>Customer Info</h5>
                         </div>
                         <div class="ibox-content add-company view-order">
                                 
@@ -351,10 +351,10 @@
                         <div class="ibox-content add-company view-order">
                                 
                           <blockquote>
-                              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
-                              <small><strong>Author name</strong> in <cite title="" data-original-title="">June 26, 2015</cite></small>
+                              <p>${order.sellerNote}</p>
+                             <%--  <small><strong>Author name</strong> in <cite title="" data-original-title="">June 26, 2015</cite></small> --%>
                           </blockquote>
-                          <textarea class="form-control" placeholder="Type your comments here..."></textarea>
+                         <!--  <textarea class="form-control" placeholder="Type your comments here..."></textarea> -->
 
                         </div>
                     </div>

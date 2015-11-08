@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.goeasy.bean.OrderBean;
+import com.goeasy.bean.PaymentUploadBean;
 import com.goeasy.helper.ConverterClass;
 import com.goeasy.helper.FileUploadForm;
 import com.goeasy.helper.HelperClass;
@@ -31,6 +32,7 @@ import com.goeasy.model.OrderPayment;
 import com.goeasy.model.Partner;
 import com.goeasy.model.PaymentUpload;
 import com.goeasy.service.DownloadService;
+import com.goeasy.service.ManualChargesService;
 import com.goeasy.service.OrderService;
 import com.goeasy.service.PartnerService;
 import com.goeasy.service.PaymentUploadService;
@@ -55,12 +57,23 @@ public class UploadController {
 private SaveContents saveContents;
 @Autowired
 private PartnerService partnerService;
+@Autowired
+private ManualChargesService manualChargesService;
 
  @RequestMapping(value = "/seller/paymentUploadList", method = RequestMethod.GET)
  public ModelAndView paymentUploadList(HttpServletRequest request) {
 		  Map<String, Object> model = new HashMap<String, Object>();
 		  System.out.println(" Inside Upload payment list");
-		  model.put("payments", ConverterClass.prepareListofPaymentUploadBean(paymentUploadService.listPaymentUploads(HelperClass.getSellerIdfromSession(request))));
+		  List<PaymentUploadBean> payuploadbeanlist=ConverterClass.prepareListofPaymentUploadBean(paymentUploadService.listPaymentUploads(HelperClass.getSellerIdfromSession(request)));
+		  if(payuploadbeanlist!=null)
+		  {
+		  for(PaymentUploadBean bean:payuploadbeanlist)
+		  {
+			  bean.setManualCharges(manualChargesService.getMCforPaymentID(bean.getUploadDesc(), HelperClass.getSellerIdfromSession(request)));
+		  }
+		  model.put("payments",payuploadbeanlist);
+		  }
+		  
 		  return new ModelAndView("dailyactivities/paymentUploadList", model);
 		 }
 

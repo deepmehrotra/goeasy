@@ -10,6 +10,7 @@ public class ExpenseCategoryBean {
 	private String expcatName;
 	private String expcatDescription;
 	private Date createdOn;
+	private double monthlyAmount;
 	private List<ExpenseBean> expenses = new ArrayList<ExpenseBean>();
 	public int getExpcategoryId() {
 		return expcategoryId;
@@ -42,5 +43,11 @@ public class ExpenseCategoryBean {
 	}
 	public void setExpenses(List<ExpenseBean> expenses) {
 		this.expenses = expenses;
+	}
+	public double getMonthlyAmount() {
+		return monthlyAmount;
+	}
+	public void setMonthlyAmount(double monthlyAmount) {
+		this.monthlyAmount = monthlyAmount;
 	}
 }

@@ -34,10 +34,12 @@ import com.goeasy.helper.ValidateUpload;
 import com.goeasy.model.Order;
 import com.goeasy.model.Partner;
 import com.goeasy.model.Product;
+import com.goeasy.model.TaxCategory;
 import com.goeasy.service.DownloadService;
 import com.goeasy.service.OrderService;
 import com.goeasy.service.PartnerService;
 import com.goeasy.service.ProductService;
+import com.goeasy.service.TaxDetailService;
 
 
 /**
@@ -57,6 +59,8 @@ public class OrderController {
  private PartnerService partnerService;
  @Autowired
  private ProductService productService;
+ @Autowired
+ private TaxDetailService taxDetailService;
  
  private static final String UPLOAD_DIR="upload";
  
@@ -173,10 +177,14 @@ public ModelAndView invalidLogin() {
 public ModelAndView save(HttpServletRequest request,@ModelAttribute("uploadForm") FileUploadForm uploadForm,
 				Model map) {
 	System.out.println("Inside save method");
+	double starttime=System.currentTimeMillis();
+	System.out.println(" **StartTime : "+starttime);
 	List<MultipartFile> files = uploadForm.getFiles();
 	 InputStream inputStream = null;  
 	  OutputStream outputStream = null; 
-
+	//  Map<String ,Object> errorMap =null;
+	  Map<String, Object> model = new HashMap<String, Object>();
+	 // model.put("orders",  ConverterClass.prepareListofBean(orderService.listOrders(4)));
 	List<String> fileNames = new ArrayList<String>();
 	MultipartFile fileinput=files.get(0);
 	int sellerId=HelperClass.getSellerIdfromSession(request);
@@ -192,31 +200,48 @@ public ModelAndView save(HttpServletRequest request,@ModelAttribute("uploadForm"
 		 switch(uploadForm.getSheetValue())
 		 {
 		 	case "ordersummary" :
-		 		saveContents.saveOrderContents(files.get(0),sellerId);
+		 		model.put("orderMap", saveContents.saveOrderContents(files.get(0),sellerId));
+		 		model.put("mapType", "orderMap");
+		 		//saveContents.saveOrderContents(files.get(0),sellerId);
 		 		break;
 		 	case "orderPoSummary" :
-		 		saveContents.saveOrderPOContents(files.get(0),sellerId);
+		 		model.put("orderPoMap", saveContents.saveOrderContents(files.get(0),sellerId));
+		 		model.put("mapType", "orderPoMap");
+		 		//saveContents.saveOrderPOContents(files.get(0),sellerId);
 		 		break;
 		 	case "paymentSummary" :
-		 		saveContents.savePaymentContents(files.get(0),sellerId);
+		 		model.put("orderPaymentMap",saveContents.savePaymentContents(files.get(0),sellerId));
+		 		model.put("mapType", "orderPaymentMap");
+		 		//saveContents.savePaymentContents(files.get(0),sellerId);
 		 		break;
 		 	case "returnSummary" :
 		 		saveContents.saveOrderReturnDetails(files.get(0),sellerId);
+		 		model.put("mapType", "returnSummary");
 		 		break;
 		 	case "productSummary" :
-		 		saveContents.saveProductContents(files.get(0),sellerId);
+		 		model.put("productMap",saveContents.saveProductContents(files.get(0),sellerId));
+		 		model.put("mapType", "productMap");
+		 		//saveContents.saveProductContents(files.get(0),sellerId);
 		 		break;
 		 	case "inventorySummary" :
-		 		saveContents.saveInventoryDetails(files.get(0),sellerId);
+		 		model.put("inventoryMap",saveContents.saveInventoryDetails(files.get(0),sellerId));
+		 		model.put("mapType", "inventoryMap");
+		 		//saveContents.saveInventoryDetails(files.get(0),sellerId);
 		 		break;
 			case "debitNoteSummary" :
+				//model.put("debitNotetMap",saveContents.saveInventoryDetails(files.get(0),sellerId));
 		 		saveContents.saveDebitNoteDetails(files.get(0),sellerId);
+		 		model.put("mapType", "debitNoteSummary");
 		 		break;
 			case "poPaymentSummary" :
+				//model.put("poPaymentMap",saveContents.saveInventoryDetails(files.get(0),sellerId));
 		 		saveContents.savePoPaymetnDetails(files.get(0),sellerId);
+		 		model.put("mapType", "poPaymentSummary");
 		 		break;
 			case "expenseSummary" :
-		 		saveContents.saveExpenseDetails(files.get(0),sellerId);
+				model.put("expensesMap",saveContents.saveExpenseDetails(files.get(0),sellerId));
+				model.put("mapType", "expensesMap");
+		 		//saveContents.saveExpenseDetails(files.get(0),sellerId);
 		 		break;
 		 		
 		 }
@@ -246,7 +271,11 @@ public ModelAndView save(HttpServletRequest request,@ModelAttribute("uploadForm"
 	        outputStream.close();
 	        inputStream.close();
 	        FileUtils.cleanDirectory(fileSaveDir);
-	        
+	        double endtime=System.currentTimeMillis();
+	        System.out.println(" **endtime : "+endtime);
+	        double lapsetime=(endtime-starttime)/1000;
+	        model.put("fileName", files.get(0).getOriginalFilename());
+	        model.put("timeTaken", lapsetime);
 		// saveContents.saveOrderContents(files.get(0),sellerId);
 		}
 		catch (Exception e) {
@@ -257,9 +286,8 @@ public ModelAndView save(HttpServletRequest request,@ModelAttribute("uploadForm"
           
 	}
 	
-	 Map<String, Object> model = new HashMap<String, Object>();
-	  model.put("orders",  ConverterClass.prepareListofBean(orderService.listOrders(4)));
-	  return new ModelAndView("redirect:/seller/orderList.html");
+	
+	  return new ModelAndView("dailyactivities/uploadResults",model);
 	
 }
  
@@ -269,7 +297,10 @@ public ModelAndView save(HttpServletRequest request,@ModelAttribute("uploadForm"
 public ModelAndView orderListDailyAct(HttpServletRequest request,@ModelAttribute("command")OrderBean orderBean,
   BindingResult result) {
  Map<String, Object> model = new HashMap<String, Object>();
+ String savedOrder=request.getParameter("savedOrder");
  model.put("orders",  ConverterClass.prepareListofBean(orderService.listOrders(HelperClass.getSellerIdfromSession(request))));
+ if(savedOrder!=null)
+ model.put("savedOrder", savedOrder);
  return new ModelAndView("dailyactivities/orderList", model);
 }
 
@@ -311,9 +342,11 @@ public ModelAndView saveOrderDA(HttpServletRequest request,@ModelAttribute("comm
    BindingResult result) {
 	System.out.println("Inside order Ssave");
 	System.out.println(" Order id :"+orderBean.getOrderId());
+//	Map<String, Object> model = new HashMap<String, Object>();
   Order order = ConverterClass.prepareModel(orderBean);
   orderService.addOrder(order,HelperClass.getSellerIdfromSession(request));
-  return new ModelAndView("redirect:/seller/orderList.html");
+  return new ModelAndView("redirect:/seller/orderList.html?savedOrder="+orderBean.getChannelOrderID());
+  
  }
 
 @RequestMapping(value = "/seller/addOrderDA", method = RequestMethod.GET)
@@ -322,13 +355,27 @@ public ModelAndView addOrderDA(HttpServletRequest request,@ModelAttribute("comma
 	System.out.println(" Inside add order da");
  Map<String, Object> model = new HashMap<String, Object>();
  List<Partner> partnerlist=partnerService.listPartners(HelperClass.getSellerIdfromSession(request));
+ List<TaxCategory> taxCatList=taxDetailService.listTaxCategories(HelperClass.getSellerIdfromSession(request));
+ List<Product> productList=productService.listProducts(HelperClass.getSellerIdfromSession(request));
  Map<String,String> partnermap=new HashMap<String, String>();
+ Map<String,String> taxcatmap=new HashMap<String, String>();
+ Map<String,String> productmap=new HashMap<String, String>();
  for(Partner bean:partnerlist)
  {
 	 partnermap.put(bean.getPcName(), bean.getPcName());
 	  
  }
+ for(TaxCategory taxcat:taxCatList)
+ {
+	 taxcatmap.put(taxcat.getTaxCatName(), taxcat.getTaxCatName());
+ }
+ for(Product product:productList)
+ {
+	 productmap.put(product.getProductSkuCode(), product.getProductSkuCode());
+ }
  model.put("partnermap", partnermap);
+ model.put("taxcatmap", taxcatmap);
+ model.put("productmap", productmap);
  //model.put("orders",  ConverterClass.prepareListofBean(orderService.listOrders(4)));
  return new ModelAndView("dailyactivities/addOrder", model);
 }

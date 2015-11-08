@@ -19,7 +19,10 @@
     		targeturl="orderPaymentSheet.html";
     	break;
     	case "download" :
-    		targeturl="download/paymentXls.html";
+    		targeturl="downloadOrderDA.html?value=paymentSummary";
+    	break;
+    	case "upload" :
+    		targeturl="uploadOrderDA.html?value=paymentSummary";
     	break;
     	case "viewManualPayments" :
     		targeturl="viewPayments.html?manualPay=true";
@@ -57,11 +60,10 @@
                                 <thead>
                                 <tr>
                                     <th>SL No.</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>Payment Cycle</th>
+                                    <th>Payment Upload ID</th>
                                     <th>Total Positive Value</th>
                                     <th>Total Negative Value</th>
+                                    <th>Manual Charges</th>
                                     <th>Net Payment Received</th>
                                     <th>Uploaded on</th>
                                     <th>Upload Status</th>
@@ -73,12 +75,11 @@
                                  <c:forEach items="${payments}" var="payment" varStatus="loop">
                                 <tr>
                                     <td>${loop.index+1}</td>
-                                    <td>TBD</td>
                                     <td>${payment.uploadDesc}</td>
-                                    <td>TBD</td>
-                                    <td>${payment.totalpositivevalue}</td>
+                                   <td>${payment.totalpositivevalue}</td>
                                     <td>${payment.totalnegativevalue}</td>
-                                    <td>${payment.netRecievedAmount}</td>
+                                     <td>${payment.manualCharges}</td>
+                                    <td>${payment.netRecievedAmount-payment.manualCharges}</td>
                                     <td>${payment.uploadDate}</td>
                                     <td>${payment.uploadStatus}</td>
                                     <td class="tooltip-demo">
@@ -90,8 +91,8 @@
                             </table>
                             </div>
                             <div class="col-sm-12">
-                                <a href="#" onclick="onclickNavigatePayment('orderPaymentSheet', 0)"  class="btn btn-success btn-xs">Bulk Upload payment Summary</a>&nbsp;&nbsp;
-                                <a href="download/paymentXls.html"  class="btn btn-success btn-xs">Download payment Summary</a>  
+                                <a href="#" onclick="onclickNavigatePayment('upload', 0)"  class="btn btn-success btn-xs">Bulk Upload payment Summary</a>&nbsp;&nbsp;
+                                <a href="#" onclick="onclickNavigatePayment('download', 0)"  class="btn btn-success btn-xs">Download payment Summary</a>  
                             </div>
                             
                         </div>

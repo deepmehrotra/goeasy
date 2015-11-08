@@ -17,4 +17,6 @@ public interface ManualChargesService {
 	 public ManualCharges getManualCharges(int mcId);
 	 
 	 public void deleteManualCharges(ManualCharges manualCharges,int sellerId);
+	 
+	 public Double getMCforPaymentID(String paymentId, int sellerId);
 }

@@ -196,6 +196,45 @@ public Category getCategory(int categoryId) {
 }
 
 @Override
+public Category getCategory(String catname ,int sellerId)
+{
+	Category returnObject=null;
+	 Seller seller=null;
+	  
+	 System.out.println(" ***Insid get category from catname ***"+catname);
+	try
+	 {
+  Session session=sessionFactory.openSession();
+  session.beginTransaction();
+  Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("id", sellerId));
+  criteria.createAlias("categories", "category", CriteriaSpecification.LEFT_JOIN)
+ .add(Restrictions.eq("category.isSubCategory",true))
+ .add(Restrictions.eq("category.catName", catname));
+  criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+	
+  if(criteria.list()!=null&&criteria.list().size()!=0)
+  {
+  seller=(Seller)criteria.list().get(0);
+  returnObject=seller.getCategories().get(0);
+  }
+  else
+  {
+	   System.out.println("Product sku "+catname+" not found");
+  }
+  session.getTransaction().commit();
+  session.close();
+	 }
+	 catch (Exception e) {
+		System.out.println(" Categroy DAO IMPL :"+e.getLocalizedMessage());
+		e.printStackTrace();
+	}
+	
+	return returnObject;
+	 
+}
+
+
+@Override
 public int deleteCategory(Category category,int sellerId) {
 	 System.out.println(" In Category delete cid "+category.getCategoryId());
 	 int catId=category.getCategoryId();
