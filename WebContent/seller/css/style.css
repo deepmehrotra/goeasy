@@ -6606,6 +6606,19 @@ div.table-total{
 .three-data-width div span{
     width: 32%;
 }
+.display-table{
+    display: table;
+    width: 100%;
+}
+.mar-btm-20-dt{
+    padding-bottom: 20px;
+    float: left;
+    width: 100%;
+}
+.pad-lr.input-group[class*=col-]{
+    padding-left: 15px;
+    padding-right: 15px;
+}
 @media (min-width: 768px) {
     #page-wrapper {
         position: inherit;

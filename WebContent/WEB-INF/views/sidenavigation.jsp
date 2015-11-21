@@ -63,7 +63,8 @@
                 <a href="minor.html"><i class="fa fa-wrench"></i> <span class="nav-label">Miscellaneous</span> <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
                         <li class="active"><a href="#" onclick="onclickSideNavigation('ManualCharges')">Manual Charges</a></li>
-                         <li><a href="#" onclick="onclickSideNavigation('Tax')">Tax/TDS</a></li>
+                         <li><a href="#" onclick="onclickSideNavigation('Tax')">Tax</a></li>
+                          <li><a href="#" onclick="onclickSideNavigation('TDS')">TDS</a></li>
                      
                     </ul>
                 </li>

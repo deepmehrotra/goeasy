@@ -10,9 +10,9 @@ import com.goeasy.model.Seller;
 public class HelperClass {
 	
 	
-	public static int getSellerIdfromSession(HttpServletRequest request)
+	public static int getSellerIdfromSession(HttpServletRequest request) throws NullPointerException
 	{
-		int sellerId;
+		int sellerId=0;
 		System.out.println(" Inside seller id from session :"+request.getUserPrincipal().getName());
 		if(request.getSession().getAttribute("sellerId")!=null)
 		{
@@ -22,10 +22,16 @@ public class HelperClass {
 		{
 		SellerDao sellerdao=new SellerDaoImpl();
 		Seller seller=sellerdao.getSeller(request.getUserPrincipal().getName());
+		if(seller!=null)
+		{
 		request.getSession().setAttribute("sellerId", seller.getId());
 		sellerId=seller.getId();
 		}
+		}
+		if(sellerId!=0)
 		return sellerId;
+		else
+			throw new NullPointerException("User not available");
 	}
 
 }

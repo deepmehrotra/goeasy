@@ -31,6 +31,7 @@ import com.goeasy.model.OrderTimeline;
 import com.goeasy.model.Partner;
 import com.goeasy.model.Product;
 import com.goeasy.model.Seller;
+import com.goeasy.model.TaxDetail;
 import com.goeasy.service.ProductService;
 import com.goeasy.service.TaxDetailService;
 
@@ -64,6 +65,7 @@ public class OrderDaoImpl implements OrderDao {
  	Customer customer=null;
  	Date tempDate=null;
  	Session session=null;
+ 	TaxDetail taxDetails=null;
  	
  	Product product = productService.getProduct(order.getProductSkuCode(), sellerId);
  	if(product!=null)
@@ -103,6 +105,11 @@ public class OrderDaoImpl implements OrderDao {
  	   System.out.println(" Tax cal SP:"+order.getOrderSP()+" >>TAxReate="+taxpercent+"  Tax>>"+
  	   (order.getOrderSP()-(order.getOrderSP()*(100/(100+seller.getPartners().get(0).getTaxrate())))));
  	  order.getOrderTax().setTax(order.getOrderSP()-(order.getOrderSP()*(100/(100+taxpercent))));
+ 	 taxDetails=new TaxDetail();
+ 	  taxDetails.setBalanceRemaining( order.getOrderTax().getTax());
+ 	  taxDetails.setParticular(order.getOrderTax().getTaxCategtory());
+ 	  taxDetailService.addMonthlyTaxDetail(session, taxDetails, sellerId);
+ 	  
  	   }
  	   order.setPartnerCommission(order.getOrderSP()-order.getGrossNetRate());
  	   order.setTotalAmountRecieved(order.getNetRate());
@@ -118,12 +125,16 @@ public class OrderDaoImpl implements OrderDao {
  	   {
  		   System.out.println(" PC "+order.getPartnerCommission());
  		   order.getOrderTax().setTdsToDeduct(order.getPartnerCommission()*(.1));
+ 		  taxDetails=new TaxDetail();
+ 		  taxDetails.setBalanceRemaining(order.getPartnerCommission()*(.1));
+ 		 taxDetails.setParticular("TDS");
+ 		taxDetailService.addMonthlyTDSDetail(session, taxDetails, sellerId);
  	   }
  	   //Reducing Product Inventory For Order
- 	 // productService.updateInventory(order.getProductSkuCode(), 0, 0, order.getQuantity(),false, sellerId);
- 	  product=productService.getProduct(order.getProductSkuCode(), sellerId);
+ 	  productService.updateInventory(order.getProductSkuCode(), 0, 0, order.getQuantity(),false, sellerId);
+ 	 /* product=productService.getProduct(order.getProductSkuCode(), sellerId);
  	  product.setQuantity(product.getQuantity()- order.getQuantity());
- 	  session.saveOrUpdate(product);
+ 	  session.saveOrUpdate(product);*/
  	   
  	   /* checking if customer is available*/
  	   System.out.println(" Inside add order before checking customer");
@@ -182,7 +193,7 @@ public class OrderDaoImpl implements OrderDao {
  	   session.close();*/
  	   }
  	   catch (Exception e) {
- 		   if(session.getTransaction()!=null&&session.getTransaction().isActive())
+ 		//   if(session.getTransaction()!=null&&session.getTransaction().isActive())
  		  // session.getTransaction().rollback();
  		   System.out.println("Inside exception in add order "+e.getLocalizedMessage()+" message: "+e.getMessage());
  		   e.printStackTrace();

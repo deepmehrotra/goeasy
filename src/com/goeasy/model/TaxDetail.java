@@ -24,6 +24,7 @@ public class TaxDetail {
 	@Column
 	private String taxortdsCycle;
 	@Column
+	//used as tax category
 	private String particular;
 	@Column
 	private Double paidAmount;

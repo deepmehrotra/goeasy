@@ -51,6 +51,9 @@ function onclickSideNavigation(value) {
 	case "Tax" :
 		targeturl="taxDetailList.html";
 	break;
+	case "TDS" :
+		targeturl="tdsDetailList.html";
+	break;
 	case "Reports" :
 		targeturl="getAllReports.html";
 	break;

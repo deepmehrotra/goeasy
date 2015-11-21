@@ -57,6 +57,7 @@ http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 				<value>com.goeasy.model.ManualCharges</value>
 				<value>com.goeasy.model.OrderTimeline</value>
 				<value>com.goeasy.model.TaxCategory</value>
+				<value>com.goeasy.model.ProductStockList</value>
 			</list>
 		</property>
 		<property name="hibernateProperties">

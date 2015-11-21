@@ -168,12 +168,58 @@ public class ManualChargesController {
   }
 
  
-
+ @RequestMapping(value = "/seller/savePaidTaxDetailJson", method = RequestMethod.POST)
+ public @ResponseBody String savePaidTaxDetailJson(HttpServletRequest request) {
+ 	System.out.println("Inside Manual Charges Ssave");
+ 	Map<String, Object> model = new HashMap<String, Object>();
+	//implementing gson date deserializer
+	 
+ 	GsonBuilder gsonBuilder = new GsonBuilder();
+ 	gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+ 	gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
+ 	Gson gson = gsonBuilder.setPrettyPrinting().create();
+ 	TaxDetail taxDetail=new TaxDetail();
+ 	System.out.println("taxId id "+request.getParameter("taxId"));
+ 	 int taxId=0;
+ 	 int sellerId=HelperClass.getSellerIdfromSession(request);
+ 	if(request.getParameter("taxId")!=null&&request.getParameter("taxId").toString().length()!=0)
+ 	{
+ 		taxId=Integer.parseInt(request.getParameter("taxId"));
+ 	}
+ 	String status=request.getParameter("status")!=null?request.getParameter("status"):"";
+	Double paidAmount=request.getParameter("paidAmount")!=null?Double.parseDouble(request.getParameter("paidAmount")):0;
+	System.out.println("while saving taxortds : "+status);
+	   if(taxId!=0)
+	   {
+		   taxDetail.setTaxId(taxId);
+		   
+	   }
+	 
+	   taxDetail.setTaxId(taxId);
+	   taxDetail.setDateOfPayment(new Date());
+	   taxDetail.setPaidAmount(paidAmount);
+	   taxDetail.setStatus(status);
+	   taxDetailService.addPaymentTaxDetail(taxDetail, sellerId);
+	  
+	   model.put("Result", "OK");
+	   model.put("Record",ConverterClass.prepareTaxDetailBean(taxDetailService.getTaxDetail(taxId)));
+	//	  model.put("Records",ConverterClass.prepareListofTaxDetailBean(taxDetailService.listTaxDetails(sellerId)));
+	     String jsonArray = gson.toJson(model);
+	     System.out.println("Respons eto save action :"+jsonArray);
+			
+	 	   return jsonArray;
+  }
 
  @RequestMapping(value = "/seller/taxDetailList", method = RequestMethod.GET)
  public String taxDetailList() {
  	
  		return "miscellaneous/taxdetails";
+ 	}
+ 
+ @RequestMapping(value = "/seller/tdsDetailList", method = RequestMethod.GET)
+ public String tdsDetailList() {
+ 	
+ 		return "miscellaneous/tdsDetails";
  	}
  
  @RequestMapping(value = "/seller/manualCharges", method = RequestMethod.GET)
@@ -213,7 +259,24 @@ public class ManualChargesController {
 	gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
 
 	Gson gson = gsonBuilder.setPrettyPrinting().create();
-   model.put("Records",ConverterClass.prepareListofTaxDetailBean(taxDetailService.listTaxDetails(sellerId)));
+   model.put("Records",ConverterClass.prepareListofTaxDetailBean(taxDetailService.listTaxDetails(sellerId, "Tax")));
+   model.put("Result", "OK");
+   String jsonArray = gson.toJson(model);
+   System.out.println(jsonArray);
+	   return jsonArray;
+  }
+  
+  @RequestMapping(value="/seller/listTdsDetailsJson", method = RequestMethod.POST)
+  public @ResponseBody String listTdsDetailsJson(HttpServletRequest request) {
+	  int sellerId=HelperClass.getSellerIdfromSession(request);
+	  System.out.println("Inside tds  list json");
+   Map<String, Object> model = new HashMap<String, Object>();
+   GsonBuilder gsonBuilder = new GsonBuilder();
+	gsonBuilder.registerTypeAdapter(Date.class, new DateDeserializer());
+	gsonBuilder.registerTypeAdapter(Date.class, new DateSerializer());
+
+	Gson gson = gsonBuilder.setPrettyPrinting().create();
+   model.put("Records",ConverterClass.prepareListofTaxDetailBean(taxDetailService.listTaxDetails(sellerId,"TDS")));
    model.put("Result", "OK");
    String jsonArray = gson.toJson(model);
    System.out.println(jsonArray);

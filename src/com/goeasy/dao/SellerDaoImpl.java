@@ -56,6 +56,7 @@ public class SellerDaoImpl implements SellerDao {
    Session session=sessionFactory.openSession();
    session.beginTransaction();
    Criteria criteria=session.createCriteria(Seller.class).add(Restrictions.eq("email", email));
+   if(criteria.list()!=null&&criteria.list().size()!=0)
    seller=(Seller)criteria.list().get(0);
    session.getTransaction().commit();
    session.close();

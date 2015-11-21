@@ -2,6 +2,7 @@ package com.goeasy.service;
 
 import java.util.List;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -76,5 +77,32 @@ public TaxCategory getTaxCategory(String catName, int sellerId)
 {
 	return taxDetailDao.getTaxCategory(catName, sellerId);
 }
+@Override
+public void addPaymentTaxDetail(TaxDetail taxDetail, int sellerId)
+{
+	taxDetailDao.addPaymentTaxDetail(taxDetail, sellerId);
+}
+@Override
+public TaxDetail addMonthlyTDSDetail(Session session, TaxDetail taxDetail, int sellerId)
+{
+	return taxDetailDao.addMonthlyTDSDetail(session, taxDetail, sellerId);
+}
 
+@Override
+public void addStatusTDSDetail(TaxDetail taxDetail, int sellerId)
+{
+	taxDetailDao.addStatusTDSDetail(taxDetail, sellerId);
+}
+
+@Override
+public TaxDetail addMonthlyTaxDetail(Session session, TaxDetail taxDetail,
+		int sellerId) {
+	// TODO Auto-generated method stub
+	return taxDetailDao.addMonthlyTaxDetail(session, taxDetail, sellerId);
+}
+@Override
+public List<TaxDetail> listTaxDetails(int sellerId,String taxOrTds)
+{
+	return taxDetailDao.listTaxDetails(sellerId,taxOrTds);
+}
 }

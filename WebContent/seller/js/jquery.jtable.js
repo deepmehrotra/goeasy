@@ -1986,6 +1986,9 @@ THE SOFTWARE.
             //Localization
             messages: {
                 addNewRecord: 'Add new Records'
+            },
+            messagesNew: {
+                addNewRecord: 'Add new Test'
             }
         },
 

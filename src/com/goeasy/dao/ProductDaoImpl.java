@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 
 import com.goeasy.model.Category;
 import com.goeasy.model.Product;
+import com.goeasy.model.ProductStockList;
 import com.goeasy.model.Seller;
-import com.goeasy.model.TaxCategory;
 
 
 /**
@@ -218,6 +218,7 @@ public class ProductDaoImpl implements ProductDao {
 		Seller seller=null;
 		Session session=null;
 		Date todayDate=new Date();
+		long currentValue=0;
 		
 		//sellerId=4;
 		try
@@ -241,9 +242,7 @@ public class ProductDaoImpl implements ProductDao {
 		   {
 		   seller=(Seller)criteria.list().get(0);
 		   product=seller.getProducts().get(0);
-		   if(product==null)
-			   System.out.println(" Null product");
-		   System.out.println(" Present value :"+product.getQuantity());
+		   currentValue=product.getQuantity();
 		   if(currentInventory!=0)
 		   {
 			   product.setQuantity(currentInventory);
@@ -261,6 +260,26 @@ public class ProductDaoImpl implements ProductDao {
 				System.out.println(" Quantity after sub :"+product.getQuantity());  
 		   }
 		   
+		   //Updating Closing stock for a month for each SKU
+		   List<ProductStockList> stocklist=product.getClosingStocks();
+		  if(stocklist!=null)
+		 // Collections.sort(stocklist);
+		  if(stocklist!=null&&stocklist.size()!=0&&stocklist.get(0).getMonth()==todayDate.getMonth()&&stocklist.get(0).getYear()==todayDate.getYear())
+		  {
+			  System.out.println(" No need to update stock list");
+		  }
+		  else
+		  {
+			  ProductStockList newObj=new ProductStockList();
+			  newObj.setStockAvailable(currentValue);
+			  newObj.setCreatedDate(todayDate);
+			  newObj.setUpdatedate(todayDate.getDate());
+			  newObj.setMonth(todayDate.getMonth());
+			  newObj.setYear(todayDate.getYear());
+			  product.getClosingStocks().add(newObj);
+		  }
+		   
+		  //Updating Closing stock for a month for each product Category
 		   Category productcat=product.getCategory();
 		   if(productcat!=null)
 		   {
@@ -312,6 +331,7 @@ public class ProductDaoImpl implements ProductDao {
 			   session.close();
 			   }
 		}
+	
 	}
 
 }

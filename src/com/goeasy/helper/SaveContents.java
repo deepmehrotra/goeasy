@@ -409,7 +409,7 @@ public class SaveContents {
     	}catch(Exception e){
     		System.out.println("Inside save contents exception :"+e.getLocalizedMessage());
     		e.printStackTrace();
-    		throw new MultipartException("Constraints Violated");
+    		//throw new MultipartException("Constraints Violated");
     	}
     	return returnOrderMap;
     }

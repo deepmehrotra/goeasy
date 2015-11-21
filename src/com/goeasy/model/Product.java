@@ -1,6 +1,8 @@
 package com.goeasy.model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -39,6 +42,8 @@ public class Product {
 	@OneToOne(cascade=CascadeType.PERSIST)	
 	@Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
 	private Category category;
+	@OneToMany(cascade=CascadeType.ALL)	
+	private List<ProductStockList> closingStocks = new ArrayList<ProductStockList>();
 	public int getProductId() {
 		return productId;
 	}
@@ -98,6 +103,12 @@ public class Product {
 	}
 	public void setChannelSKU(String channelSKU) {
 		this.channelSKU = channelSKU;
+	}
+	public List<ProductStockList> getClosingStocks() {
+		return closingStocks;
+	}
+	public void setClosingStocks(List<ProductStockList> closingStocks) {
+		this.closingStocks = closingStocks;
 	}
 	
 	

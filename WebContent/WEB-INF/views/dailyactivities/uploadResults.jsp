@@ -41,10 +41,12 @@
                         <div class="ibox-content overflow-h cus-table-filters">
                         <div class="scroll-y">
                       
-                        <table class="table table-striped table-bordered table-hover dataTables-example" >
-                                <thead>
-                                <c:choose>
+                       <c:choose>
 								    <c:when test="${mapType=='orderMap'}">
+                        <table class="table table-striped table-bordered table-hover dataTables-example" >
+                               
+                               
+								     <thead>
 								       <tr>
 	                                    <th></th>
 	                                    <th>#</th>
@@ -112,17 +114,98 @@
 	                                   </tr>
 	                                	</c:forEach>
 	                                	</c:if>
-								    	</c:when>
-									    <c:when test="${condition2}">
-									        //do something if condition2 is true
+								    	
+								
+                                
+                                </tbody>
+                            </table>
+                           
+                            </c:when>
+								<c:when test="${mapType=='productMap'}">
+									        
+									  <table class="table table-striped table-bordered table-hover dataTables-example" >
+                               			 <thead>
+								       <tr>
+	                                    <th></th>
+	                                    <th>#</th>
+	                                    <th>ProductName</th>
+	                                    <th>SkUCode</th>
+	                                    <th>Category</th>
+	                                    <th>ProductPrice</th>
+	                                    <th>Quantity</th>
+	                                    <th>Threshold Limit</th>
+	                                    <th>ChanelSKU(Separated by ;)</th>
+	                                    <th>Error Message</th>
+	                                    </tr>
+		                                </thead>
+		                                
+		                                <tbody>
+		                                   <c:if test="${!empty productMap}">
+                                  <c:forEach items="${productMap}" var="productMap" varStatus="loop">
+                                  <c:set var="product" value="${productMap.value}" />
+		                                <tr>
+	                                    <td><input type="checkbox"></td>
+	                                    <td>${loop.index+1}</td>
+	                                    <td>${product.productName}</td>
+	                                   <td>${product.productSkuCode}</td>
+	                                    <td>${product.categoryName}</td>
+	                                    <td>${product.productPrice}</td>
+	                                    <td>${product.quantity}</td>
+	                                     <td>${product.threholdLimit}</td>
+	                                    <td>${order.channelSKU}</td>
+	                                 <td style="color:red;font-weight:bold">${productMap.key}</td>
+	                                   </tr>
+	                                	</c:forEach>
+	                                	</c:if>
+								 </tbody>
+                            </table>
+
+
+									    </c:when>
+									    
+							<c:when test="${mapType=='expensesMap'}">
+									        
+									  <table class="table table-striped table-bordered table-hover dataTables-example" >
+                               			 <thead>
+								       <tr>
+	                                    <th></th>
+	                                    <th>#</th>
+	                                    <th>Name</th>
+	                                    <th>Description</th>
+	                                    <th>Expense Category</th>
+	                                    <th>Expense Amount</th>
+	                                    <th>Expenditure By</th>
+	                                    <th>Paid To</th>
+	                                    <th>Error Message</th>
+	                                    </tr>
+		                                </thead>
+		                                
+		                                <tbody>
+		                                   <c:if test="${!empty expensesMap}">
+                                  <c:forEach items="${expensesMap}" var="expensesMap" varStatus="loop">
+                                  <c:set var="expense" value="${expensesMap.value}" />
+		                                <tr>
+	                                    <td><input type="checkbox"></td>
+	                                    <td>${loop.index+1}</td>
+	                                    <td>${expense.expenseName}</td>
+	                                   <td>${expense.expenseDescription}</td>
+	                                    <td>${expense.expenseCatName}</td>
+	                                    <td>${expense.amount}</td>
+	                                    <td>${expense.expenditureByperson}</td>
+	                                     <td>${expense.paidTo}</td>
+	                                    <td style="color:red;font-weight:bold">${expensesMap.key}</td>
+	                                   </tr>
+	                                	</c:forEach>
+	                                	</c:if>
+								 </tbody>
+                            </table>
+
+
 									    </c:when>
 									    <c:otherwise>
 									       
 									    </c:otherwise>
-								</c:choose>
-                                
-                                </tbody>
-                            </table>
+									     </c:choose>
                             </div>
                            <!--  <div class="col-sm-12">
                             <div class="hr-line-dashed"></div>
